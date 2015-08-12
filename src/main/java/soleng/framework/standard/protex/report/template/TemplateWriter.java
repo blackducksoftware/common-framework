@@ -1,0 +1,279 @@
+package soleng.framework.standard.protex.report.template;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import soleng.framework.standard.protex.report.model.TemplateColumn;
+import soleng.framework.standard.protex.report.model.TemplatePojo;
+import soleng.framework.standard.protex.report.model.TemplateSheet;
+
+// TODO: Auto-generated Javadoc
+/**
+ * Writes out rows to an existing Template created by the {@link TemplateReader }.
+ *
+ * @author Ari Kamen
+ * @param <T> This is the extension of the TemplatePojo
+ */
+public class  TemplateWriter<T extends TemplatePojo> {
+
+
+	/** The log. */
+	private static Logger log = LoggerFactory.getLogger(TemplateWriter.class);
+	
+	/** The template reader. */
+	private TemplateReader templateReader = null;
+	
+	/** The pojo class. */
+	private Class<T> pojoClass = null;
+	
+	/** The book. */
+	private Workbook book = null;
+	
+	/**
+	 * Instantiates a new template writer.
+	 *
+	 * @param templateReader the template reader
+	 */
+	public  TemplateWriter(TemplateReader templateReader)
+	{
+		this.templateReader = templateReader;
+	}
+	
+	/**
+	 * Writes out pojos to specific sheet by using internal mappings specified by the user.
+	 *
+	 * @param pojoList the pojo list
+	 * @param templateSheet the template sheet
+	 * @param pojoClass the pojo class
+	 * @throws Exception the exception
+	 */
+	public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet, Class<T> pojoClass) throws Exception
+	{
+		this.pojoClass = pojoClass;
+		testReflectionMappings(templateSheet, pojoList.get(0));
+
+		book = templateReader.getInternalWorkBook();
+	
+		Map<String, TemplateColumn> columnMap = templateSheet.getColumnMap();
+		
+		Sheet activeSheet = book.getSheet(templateSheet.getSheetName());
+
+		int i = 1;
+		for(TemplatePojo pojo : pojoList)
+		{		
+			Row activeRow = activeSheet.createRow(i);			
+			writePojoValuesToRow(activeRow, pojo, columnMap);
+			i++;
+		}
+		
+		writeWorkBook(book);
+	}
+
+	/**
+	 * Write work book.
+	 *
+	 * @param book the book
+	 * @throws Exception the exception
+	 */
+	public void writeWorkBook(Workbook book) throws Exception 
+	{
+		FileOutputStream stream = null;
+		File outputLocation = templateReader.getOutputLocation();
+		
+		try
+		{
+			if(outputLocation != null)
+				stream = new FileOutputStream(outputLocation);
+			else
+				throw new Exception("Unable to write, destination unknown!");
+
+			book.write(stream);
+			log.info("Finished writing workbook to: " + outputLocation);
+			
+			
+			// Relead the book every time, in case multiple sheets need to be written to.
+			// POI [Bug 49940]  https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
+			TemplateReader.generateWorkBookFromFile(outputLocation);
+
+		} catch (Exception e)
+		{
+			log.error("Fatal: " + e.getMessage());
+			throw new Exception("Fatal error, unable to write out workbook:", e);
+		}
+		finally
+		{
+			try{
+				stream.close();
+			} catch (IOException ioe) {}
+		}
+		
+	}
+
+	/**
+	 * Write pojo values to row.
+	 *
+	 * @param activeRow the active row
+	 * @param pojo the pojo
+	 * @param columnMap the column map
+	 */
+	private void writePojoValuesToRow(Row activeRow, TemplatePojo pojo,
+			Map<String, TemplateColumn> columnMap) 
+	{
+		
+		Iterator<String> it = columnMap.keySet().iterator();
+		while(it.hasNext())
+		{
+			String key = it.next();
+			TemplateColumn column = columnMap.get(key);
+			Integer position = column.getColumnPos();
+			CellStyle styleFromTemplate = column.getCellStyle();
+			
+			// TODO:  Introduce types later
+			Cell activeCell = activeRow.createCell(position, Cell.CELL_TYPE_STRING);
+			// Set the value
+		
+			String pojoValue = getValueFromPojo(pojo, column.getLookupMappingName());
+			activeCell.setCellValue(pojoValue);
+			
+			
+			// Set the cell style
+			// TODO:  This catches the XML Disconnected exception, but the styles come out all wrong on subsequent sheets.
+			// Appears to only happen in the unit tests.  
+			try{
+				CellStyle newcs = book.createCellStyle();
+				newcs.cloneStyleFrom(styleFromTemplate);
+				activeCell.setCellStyle(newcs);
+			} catch (Exception e)
+			{
+				log.warn("Unable to copy cell styles!" + e.getMessage());
+			}
+		}		
+	}
+
+	/**
+	 * Tests to make sure that the mappings properly map to the POJO.
+	 *
+	 * @param templateSheet the template sheet
+	 * @param pojo the pojo
+	 * @throws Exception If Mappings are wrong
+	 */
+	private void testReflectionMappings(TemplateSheet templateSheet, T pojo) throws Exception 
+	{
+		boolean missingMappings = false;
+		boolean missingPojoMethods = false;
+
+		List<String> missingNames = new ArrayList<String>();
+		List<String> missingMethods = new ArrayList<String>();
+		
+		Collection<TemplateColumn> columns = templateSheet.getColumnMap().values();
+		for(TemplateColumn column : columns)
+		{
+			String lookupName = column.getLookupMappingName();
+			if(lookupName == null)
+			{
+				missingMappings = true;
+				missingNames.add(column.getColumnName());
+
+			}			
+			String value = getValueFromPojo(pojo, lookupName);
+			if(value == null)
+			{
+				missingPojoMethods = true;
+				missingMethods.add(lookupName);
+				log.error("Missing method: lookupName = " + lookupName);
+			}
+			
+		}
+		
+		if(missingMappings)
+		{
+			Collections.sort(missingNames);
+			String prettyListStr = getPrettyList(missingNames);
+			throw new Exception("Columns missing mapping: " + prettyListStr);
+		}
+		if(missingPojoMethods)
+		{
+			Collections.sort(missingMethods);
+			String prettyListStr = getPrettyList(missingMethods);
+			throw new Exception("Methods missing from POJO: " + prettyListStr);
+		}
+		
+	}
+	
+	/**
+	 * Gets the pretty list.
+	 *
+	 * @param list the list
+	 * @return the pretty list
+	 */
+	private String getPrettyList(List<String> list) 
+	{
+		StringBuilder sb = new StringBuilder();
+		Iterator<String> it = list.iterator();
+		while(it.hasNext())
+		{
+			String s = it.next();
+			sb.append(s);
+			
+			if(it.hasNext())
+				sb.append(",");
+		}
+		
+		return sb.toString();
+	}
+
+	/**
+	 * Use reflection to derive the value from the POJO.
+	 *
+	 * @param pojo the pojo
+	 * @param lookupMappingName the lookup mapping name
+	 * @return the value from pojo
+	 */
+	private String getValueFromPojo(TemplatePojo pojo, String lookupMappingName) 
+	{
+		String value = null;
+		String lookUpMethodName = "get"+lookupMappingName;
+		
+		try
+		{	
+			Method method = pojoClass.getDeclaredMethod(lookUpMethodName);
+
+			if(method == null)
+			{
+				log.warn("Method for the pojo class does not exist with name: " + lookUpMethodName);
+				return value;
+			}
+			
+			Object ret = method.invoke(pojo);
+			value = (ret == null) ? "" : ret.toString();
+			
+		} catch (Exception e)
+		{
+			log.warn("Unable to reflectively get value for method: " + lookupMappingName);
+		}
+		
+		return value;
+	}
+	
+	
+	
+}

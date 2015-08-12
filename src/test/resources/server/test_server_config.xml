@@ -1,0 +1,26 @@
+<servers>
+	<server>
+		<server.name>bla_protex</server.name>
+		<user.name>a</user.name>
+		<password>a</password>
+		<application>PROTEX</application>
+	</server>
+	<server>
+		<server.name>bla_codecenter</server.name>
+		<user.name>b</user.name>
+		<password>b</password>
+		<application>CODECENTER</application>
+	</server>
+	<server>
+		<server.name>cServer</server.name>
+		<user.name>c</user.name>
+		<password>c</password>
+		<application>CODECENTER</application>
+	</server>
+	<server>
+		<server.name>dServer</server.name>
+		<user.name>d</user.name>
+		<password>d</password>
+		<application>PROTEX</application>
+	</server>
+</servers>

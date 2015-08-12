@@ -1,0 +1,9 @@
+servers:
+- serverName: http://satemplatecc1/
+  userName: akamen
+  password: blackduck
+  application: CODECENTER
+- serverName: https://se-hayek.blackducksoftware.com
+  userName: akamen@blackducksoftware.com
+  password: blackduck
+  application: PROTEX

@@ -1,0 +1,20 @@
+[
+       {
+             "serverURL": "http://satemplatecc1/",
+             "userName": "akamen",
+             "password": "blackduck",
+             "suiteType": "CODECENTER"
+       },     
+       {
+             "serverURL": " https://se-hayek.blackducksoftware.com",
+             "userName": "akamen@blackducksoftware.com",
+             "password": "blackduck",
+             "suiteType": "PROTEX"
+       },
+              {
+             "serverURL": "testJsonUrl",
+             "userName": "someUser",
+             "password": "blackduck",
+             "suiteType": "PROTEX"
+       }
+]
