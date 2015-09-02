@@ -22,6 +22,14 @@ import java.util.List;
 
 import com.blackducksoftware.tools.commonframework.core.config.IConfigurationManager;
 
+/**
+ * An interface for ConfigurationManager subclasses that need to be consumable
+ * by a CodeCenterDao object by managing a list of application custom attribute
+ * names.
+ * 
+ * @author sbillings
+ * 
+ */
 public interface CodeCenterDaoConfigManager extends IConfigurationManager {
 
     @Deprecated
@@ -30,8 +38,18 @@ public interface CodeCenterDaoConfigManager extends IConfigurationManager {
     @Deprecated
     void setEstNumApps(int estNumApps);
 
+    /**
+     * Add an application custom attribute to the list of attributes to track.
+     * 
+     * @param attrName
+     */
     void addApplicationAttribute(String attrName);
 
+    /**
+     * Get the list of names of application custom attributes to track.
+     * 
+     * @return
+     */
     List<String> getApplicationAttributeNames();
 
     @Deprecated
@@ -58,6 +76,11 @@ public interface CodeCenterDaoConfigManager extends IConfigurationManager {
     @Deprecated
     void setCcDbPassword(String dbPassword);
 
+    /**
+     * Get the value of the "should ignore non-KB components" flag.
+     * 
+     * @return
+     */
     boolean isSkipNonKbComponents();
 
 }

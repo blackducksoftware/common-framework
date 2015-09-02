@@ -18,7 +18,8 @@
 package com.blackducksoftware.tools.commonframework.standard.trackable.progressrecorder;
 
 /**
- * The Class AbstractProgressRecorder.
+ * An abstract ProgressRecorder that implements everything except the actual
+ * recording of the progress.
  */
 public abstract class AbstractProgressRecorder implements ProgressRecorder {
 
@@ -42,7 +43,7 @@ public abstract class AbstractProgressRecorder implements ProgressRecorder {
      * 100 licenses, you might want to set this number to 101 to give the worker
      * time to finish up after the last license is read. Then, when everything
      * is done and ready for the user, call setDone().
-     *
+     * 
      * @param totalToExpect
      *            the new total to complete
      */
@@ -71,7 +72,7 @@ public abstract class AbstractProgressRecorder implements ProgressRecorder {
      * The progress reporting mechanism goes here, implemented by the concrete
      * class. That could be writing to a log, sending to a different thread,
      * etc.
-     *
+     * 
      * @param percentComplete
      *            the percent complete
      * @param completedSoFar

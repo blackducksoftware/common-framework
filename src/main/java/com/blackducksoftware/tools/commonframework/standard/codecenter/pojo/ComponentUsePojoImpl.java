@@ -17,6 +17,12 @@
  *******************************************************************************/
 package com.blackducksoftware.tools.commonframework.standard.codecenter.pojo;
 
+/**
+ * A plain old java object class for a Component Use.
+ * 
+ * @author sbillings
+ * 
+ */
 public class ComponentUsePojoImpl implements ComponentUsePojo {
     private final String id;
 

@@ -27,6 +27,13 @@ import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.tools.commonframework.core.config.ConfigurationManager;
 
+/**
+ * A ConfigurationManager subclass that is consumable by a CodeCenterDao object.
+ * It manages a list of application custom attribute names.
+ * 
+ * @author sbillings
+ * 
+ */
 public class CodeCenterDaoConfigManagerImpl extends ConfigurationManager
 	implements CodeCenterDaoConfigManager {
 
@@ -104,66 +111,81 @@ public class CodeCenterDaoConfigManagerImpl extends ConfigurationManager
 	}
     }
 
-    @Override
+    @Deprecated
     public int getEstNumApps() {
 	return estNumApps;
     }
 
-    @Override
+    @Deprecated
     public void setEstNumApps(int estNumApps) {
 	this.estNumApps = estNumApps;
     }
 
+    /**
+     * Add an application custom attribute to the list of attributes to track.
+     * 
+     * @param attrName
+     */
     @Override
     public void addApplicationAttribute(String attrName) {
 	applicationAttributeNames.add(attrName);
     }
 
+    /**
+     * Get the list of names of application custom attributes to track.
+     * 
+     * @return
+     */
     @Override
     public List<String> getApplicationAttributeNames() {
 	return applicationAttributeNames;
     }
 
-    @Override
+    @Deprecated
     public String getCcDbServerName() {
 	return ccDbServerName;
     }
 
-    @Override
+    @Deprecated
     public void setCcDbServerName(String dbServer) {
 	ccDbServerName = dbServer;
     }
 
-    @Override
+    @Deprecated
     public int getCcDbPort() {
 	return ccDbPort;
     }
 
-    @Override
+    @Deprecated
     public void setCcDbPort(int dbPort) {
 	ccDbPort = dbPort;
     }
 
-    @Override
+    @Deprecated
     public String getCcDbUserName() {
 	return ccDbUser;
     }
 
-    @Override
+    @Deprecated
     public void setCcDbUserName(String dbUser) {
 	ccDbUser = dbUser;
     }
 
-    @Override
+    @Deprecated
     public String getCcDbPassword() {
 	return ccDbPassword;
     }
 
-    @Override
+    @Deprecated
     public void setCcDbPassword(String dbPassword) {
 	ccDbPassword = dbPassword;
     }
 
+    /**
+     * Get the value of the "should ignore non-KB components" flag.
+     * 
+     * @return
+     */
     @Override
     public boolean isSkipNonKbComponents() {
 	return skipNonKbComponents;

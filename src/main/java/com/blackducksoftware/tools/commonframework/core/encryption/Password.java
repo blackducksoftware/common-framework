@@ -50,12 +50,12 @@ import com.blackducksoftware.tools.commonframework.core.encoding.Ascii85Encoder;
  * Password.PASSWORD_MAX_LENGTH. Original text passwords are encrypted using
  * DES/ECB/NoPadding and then encoded in Ascii85 (aka Base85) encoding (for,
  * say, storage in config files).
- *
+ * <p>
  * Encrypting and decrypting uses a KeyStore that resides on the classpath. As
  * of April 9, 2015, we're using the same KeyStore, and same KeyStore password
  * as the integration team, so KeyStore files (*.jceks) are interchangable
  * between Black Duck integrations and Solution Engineering utilities.
- *
+ * <p>
  * The methods you'll most likely want to use are encryptEncode() and
  * decodeDecrypt(). Optionally, you can call isValidPassword() to test a
  * password's validity, but encryptEncode() also calls it (and throws an

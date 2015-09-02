@@ -20,7 +20,9 @@ package com.blackducksoftware.tools.commonframework.core.gwt.async;
 import com.google.gwt.user.client.Timer;
 
 /**
- * The Class AsyncUtils.
+ * A utility class for managing long-running server-side tasks. Let's you
+ * schedule a future polling event, and convert a % complete value into a crude
+ * progress bar string.
  */
 public class AsyncUtils {
 
@@ -49,7 +51,7 @@ public class AsyncUtils {
 
     /**
      * Build a "progress bar-like" message.
-     *
+     * 
      * @param percentComplete
      *            The percentage of the task that has been completed
      * @return A string representing a crude progress bar, like:

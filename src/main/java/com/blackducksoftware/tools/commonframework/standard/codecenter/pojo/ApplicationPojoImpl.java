@@ -19,6 +19,12 @@ package com.blackducksoftware.tools.commonframework.standard.codecenter.pojo;
 
 import java.util.Map;
 
+/**
+ * A plain old Java object representing a Code Center application.
+ * 
+ * @author sbillings
+ * 
+ */
 public class ApplicationPojoImpl implements Comparable<ApplicationPojo>,
 	ApplicationPojo {
     private final String id;

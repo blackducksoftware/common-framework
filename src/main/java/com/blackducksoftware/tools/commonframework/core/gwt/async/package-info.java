@@ -15,11 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *******************************************************************************/
-package com.blackducksoftware.tools.commonframework.standard.protex.commandline;
-
 /**
- * The Class ProtexCommandShell.
+ * This package contains classes for adding asychronous server
+ * operations to GWT clients. These classes can be used to add
+ * a long-running server operation to a GWT client while avoiding
+ * transaction timeout issues. The client initiates the long-running
+ * server-side operation, and then periodically polls the server
+ * to check on the status/results.
  */
-public class ProtexCommandShell {
-
-}
+package com.blackducksoftware.tools.commonframework.core.gwt.async;

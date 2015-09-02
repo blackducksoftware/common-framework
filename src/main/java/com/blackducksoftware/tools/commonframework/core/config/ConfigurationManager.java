@@ -45,9 +45,9 @@ import com.blackducksoftware.tools.commonframework.standard.protex.report.templa
 /**
  * Abstract ConfigManager that either: <li>Loads basic properties used for most
  * projects. or <li>Accepts a user object with the necessary populated fields
- *
+ * 
  * @author Ari Kamen
- *
+ * 
  */
 public abstract class ConfigurationManager extends ConfigConstants implements
 	IConfigurationManager {
@@ -113,7 +113,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     private ConfigurationFile configFile;
 
     /**
-     * The Enum URL_INFORMATION.
+     * Selects a component of a URL.
      */
     public static enum URL_INFORMATION {
 	/** The host. */
@@ -132,7 +132,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Extensible to provide custom properties. Use {@link}
      * {@link #getProperty(String)} method.
-     *
+     * 
      * @param configFileLocation
      *            the config file location
      * @param applicationType
@@ -148,7 +148,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Instantiates a new configuration manager.
-     *
+     * 
      * @param props
      *            the props
      * @param applicationType
@@ -164,7 +164,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Initializer for stream instead of specific file Used when file's
      * classpath is not obvious (web context).
-     *
+     * 
      * @param is
      *            the is
      * @param applicationType
@@ -179,7 +179,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * CommonUser based instantiation Used by those applications that do not
      * have a property file.
-     *
+     * 
      * @param user
      * @param applicationName
      */
@@ -191,7 +191,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Load properties from file.
-     *
+     * 
      * @param configFileLocation
      *            the config file location
      * @throws IOException
@@ -205,7 +205,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Load properties from stream.
-     *
+     * 
      * @param is
      *            the is
      */
@@ -238,7 +238,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Optional properties that are end point agnostic.
-     *
+     * 
      * @param suppliedAppNamePropertyName
      */
     protected void initCommonProperties() {
@@ -343,7 +343,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Returns a list of ServerBeans based on Application Name only
-     *
+     * 
      * @param appName
      * @return
      * @throws Exception
@@ -360,7 +360,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Process server configuration information.
-     *
+     * 
      * @return the list
      */
     protected void processServerConfigurationInformation() {
@@ -412,7 +412,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Returns the value for the property resource loaded by the
      * ConfigurationManager.
-     *
+     * 
      * @param propertyKey
      *            the property key
      * @return the property
@@ -441,7 +441,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Check to make sure this UNsupported (obsolete) property is not set. If it
      * is set, throw an IllegalArgumentException.
-     *
+     * 
      * @param propertyKey
      *            the property key
      * @return the property
@@ -461,7 +461,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Retrieves optional properties and sets them to the config.
-     *
+     * 
      * @param propertyKey
      *            the property key
      * @return the optional property
@@ -485,7 +485,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Retrieves optional property, if property is missing returns default
      * value.
-     *
+     * 
      * @param <T>
      * @param key
      * @param defaultValue
@@ -529,7 +529,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      * Consumes user specified mappings from the property file. User must have
      * "template.mapping.x=column,value" specified for this to be populated. <br>
      * Used by {@link TemplateReader}
-     *
+     * 
      * @return the mappings
      * @throws IllegalArgumentException
      *             the illegal argument exception
@@ -576,7 +576,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the proxy server.
-     *
+     * 
      * @return the proxy server
      */
     @Override
@@ -586,7 +586,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Sets the proxy server.
-     *
+     * 
      * @param proxyServer
      *            the new proxy server
      */
@@ -597,7 +597,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the proxy port.
-     *
+     * 
      * @return the proxy port
      */
     @Override
@@ -607,7 +607,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Sets the proxy port.
-     *
+     * 
      * @param proxyPort
      *            the new proxy port
      */
@@ -618,7 +618,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the proxy server https.
-     *
+     * 
      * @return the proxy server https
      */
     @Override
@@ -628,7 +628,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Sets the proxy server https.
-     *
+     * 
      * @param proxyServerHttps
      *            the new proxy server https
      */
@@ -639,7 +639,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the proxy port https.
-     *
+     * 
      * @return the proxy port https
      */
     @Override
@@ -649,7 +649,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Sets the proxy port https.
-     *
+     * 
      * @param proxyPortHttps
      *            the new proxy port https
      */
@@ -660,7 +660,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the sdk time out.
-     *
+     * 
      * @return the sdk time out
      */
     @Override
@@ -670,7 +670,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Sets the sdk time out.
-     *
+     * 
      * @param sdkTimeOut
      *            the new sdk time out
      */
@@ -681,7 +681,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Provides information from the server URL.
-     *
+     * 
      * @param urlInfo
      *            the url info
      * @return the string
@@ -708,7 +708,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Fully resolved URL, used to instantiate SDK Proxy Objects.
-     *
+     * 
      * @return the server url
      */
     @Override
@@ -719,7 +719,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Sets the internal server URL so that it can determine host and port
      * information.
-     *
+     * 
      * @param serverURL
      *            the new server url
      */
@@ -730,7 +730,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the props.
-     *
+     * 
      * @return the props
      */
     @Override
@@ -740,7 +740,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Gets the server list location.
-     *
+     * 
      * @return the server list location
      */
     private String getServerListLocation() {
@@ -749,7 +749,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Sets the server list location.
-     *
+     * 
      * @param serverListLocation
      *            the new server list location
      */
@@ -771,7 +771,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      * Returns this ConfigurationManager's server bean. This may either be the
      * explicitly configured application_name.property_name settings <br>
      * or the first element the server.list configuration.
-     *
+     * 
      * @return
      */
     @Override
@@ -796,7 +796,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Allows the user to add server beans Useful in the case of a non-standard
      * configuration.
-     *
+     * 
      * @param bean
      */
     @Override
@@ -813,7 +813,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     /**
      * Returns the email configuration object. This contains the required email
      * protocol information - SMTP address - SMTP TO - SMTP From
-     *
+     * 
      * @return
      */
     @Override

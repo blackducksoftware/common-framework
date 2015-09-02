@@ -22,6 +22,12 @@ import java.io.Serializable;
 import com.blackducksoftware.tools.commonframework.core.config.ConfigurationManager;
 import com.blackducksoftware.tools.commonframework.core.config.server.ServerBean;
 
+/**
+ * Exception thrown by CommonFramework classes.
+ * 
+ * @author sbillings
+ * 
+ */
 public class CommonFrameworkException extends Exception implements Serializable {
 
     private static final long serialVersionUID = -638853136815473675L;
@@ -37,6 +43,12 @@ public class CommonFrameworkException extends Exception implements Serializable 
 	this.cf = cf;
     }
 
+    /**
+     * Get a string containing the server and username, if the thrower provided
+     * it.
+     * 
+     * @return
+     */
     public String getConfigurationInformation() {
 	StringBuilder sb = new StringBuilder();
 

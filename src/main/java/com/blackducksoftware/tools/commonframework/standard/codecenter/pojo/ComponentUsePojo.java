@@ -18,8 +18,19 @@
 
 package com.blackducksoftware.tools.commonframework.standard.codecenter.pojo;
 
+/**
+ * Interface for component use POJO classes.
+ * 
+ * @author sbillings
+ * 
+ */
 public interface ComponentUsePojo {
 
+    /**
+     * Get the component use ID.
+     * 
+     * @return
+     */
     String getId();
 
 }

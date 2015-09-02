@@ -17,12 +17,20 @@
  *******************************************************************************/
 package com.blackducksoftware.tools.commonframework.core.config;
 
+/**
+ * This class provides access to a set of constants used by the config classes.
+ * 
+ * @author sbillings
+ * 
+ */
 public class ConfigConstants {
 
     /**
-     * The type of Black Duck Application that you want to configure for.
-     * CODECENTER - Black Duck Code Center PROTEX - Black Duck Code Center HUB -
-     * 2M, not yet released GENERIC - Not a specific Black Duck App
+     * The type of Black Duck Application that you want to configure for. <br>
+     * CODECENTER - Black Duck Code Center <br>
+     * PROTEX - Black Duck Code Center <br>
+     * HUB - the Hub, not yet released <br>
+     * GENERIC - Not a specific Black Duck App
      */
     public static enum APPLICATION {
 	CODECENTER, PROTEX, HUB, GENERIC

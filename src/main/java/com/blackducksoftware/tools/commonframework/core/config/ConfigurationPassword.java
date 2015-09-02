@@ -33,9 +33,9 @@ import com.blackducksoftware.tools.commonframework.core.encryption.Password;
  * encrypted/ascii85-encoded. Modern config files will only have plain text or
  * encrypted/Ascii85-encoded passwords. Legacy files may have base64-encoded
  * passwords. Has a single method that returns the password in plain text.
- *
+ * 
  * @author sbillings
- *
+ * 
  */
 public class ConfigurationPassword {
 
@@ -45,6 +45,18 @@ public class ConfigurationPassword {
     private PasswordMetaProperties passwordMetaProperties;
     private final String propertyName;
 
+    /**
+     * This enum describes the state of the password as found in the config
+     * file. If it's a modern config file, the user may or may not have
+     * specified the "is encrypted" property. If it's a legacy property file,
+     * the user may or may not have specified the "is plain text" property. If
+     * the user has included both the "is plain text" and "is encrypted"
+     * properties, the config file is invalid and an exception is thrown when it
+     * is read.
+     * 
+     * @author sbillings
+     * 
+     */
     public enum PasswordMetaProperties {
 	PLAIN_TEXT_TRUE, PLAIN_TEXT_FALSE, ENCRYPTED_TRUE, ENCRYPTED_FALSE, NONE
 	// there is no BOTH; if both isplaintext and isencrypted are present,
@@ -54,7 +66,7 @@ public class ConfigurationPassword {
     /**
      * Static factory method to create an instance for a property named
      * "password" (no prefix) and the Properties object it lives in.
-     *
+     * 
      * @param props
      * @param suppliedAppNamePropertyName
      * @return
@@ -69,7 +81,7 @@ public class ConfigurationPassword {
      * prefix (like "protex" or "cc") and the Properties object it lives in. The
      * password property has some prefix that will be determined by parsing the
      * line.
-     *
+     * 
      * @param props
      * @param suppliedAppNamePropertyName
      * @return
@@ -82,7 +94,7 @@ public class ConfigurationPassword {
     /**
      * Static factory method to create an instance from a line from a Properties
      * file and the Properties object it lives in.
-     *
+     * 
      * @param props
      * @param configFileLine
      * @return
@@ -105,6 +117,12 @@ public class ConfigurationPassword {
 	return new ConfigurationPassword(props, prefix);
     }
 
+    /**
+     * Determines whether or not the password in the configuration file needs to
+     * be encrypted/encoded.
+     * 
+     * @return
+     */
     public boolean isInNeedOfEncryption() {
 	switch (passwordMetaProperties) {
 	case PLAIN_TEXT_TRUE:
@@ -121,6 +139,12 @@ public class ConfigurationPassword {
 	}
     }
 
+    /**
+     * Determines whether or not an "is encrypted" property needs to be added to
+     * the configuration file.
+     * 
+     * @return
+     */
     public boolean isInNeedOfNewEncryptionProperty() {
 	switch (passwordMetaProperties) {
 	case PLAIN_TEXT_TRUE:
@@ -157,14 +181,31 @@ public class ConfigurationPassword {
 	return propertyName;
     }
 
+    /**
+     * Get information about how the password was specified in the
+     * configuration.
+     * 
+     * @return
+     */
     public PasswordMetaProperties getPasswordMetaProperties() {
 	return passwordMetaProperties;
     }
 
+    /**
+     * Get the plain text form of the password.
+     * 
+     * @return
+     */
     public String getPlainText() {
 	return passwordInPlainText;
     }
 
+    /**
+     * Get the encrypted/encoded form of the password.
+     * 
+     * @return
+     * @throws Exception
+     */
     public String getEncrypted() throws Exception {
 	String plainTextPassword = getPlainText();
 	if (plainTextPassword == null) {
@@ -175,7 +216,7 @@ public class ConfigurationPassword {
 
     /**
      * Private constructor; Call one of the static factory methods instead.
-     *
+     * 
      * @param props
      * @param propertyNamePrefix
      */
@@ -187,7 +228,7 @@ public class ConfigurationPassword {
 
     /**
      * Private constructor; Call one of the static factory methods instead.
-     *
+     * 
      * @param props
      * @param propertyNamePrefix
      */

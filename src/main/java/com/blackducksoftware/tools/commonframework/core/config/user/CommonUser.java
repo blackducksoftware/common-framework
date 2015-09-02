@@ -20,13 +20,14 @@ package com.blackducksoftware.tools.commonframework.core.config.user;
 import java.io.Serializable;
 
 /**
- * The Interface CommonUser.
+ * An interface for classes that provide getters/setters for server-specific
+ * user credentials.
  */
 public interface CommonUser extends Serializable {
 
     /**
      * Sets the server.
-     *
+     * 
      * @param servername
      *            the new server
      */
@@ -34,7 +35,7 @@ public interface CommonUser extends Serializable {
 
     /**
      * Sets the user name.
-     *
+     * 
      * @param username
      *            the new user name
      */
@@ -42,7 +43,7 @@ public interface CommonUser extends Serializable {
 
     /**
      * Sets the password.
-     *
+     * 
      * @param password
      *            the new password
      */
@@ -50,21 +51,21 @@ public interface CommonUser extends Serializable {
 
     /**
      * Gets the server.
-     *
+     * 
      * @return the server
      */
     String getServer();
 
     /**
      * Gets the user name.
-     *
+     * 
      * @return the user name
      */
     String getUserName();
 
     /**
      * Gets the password.
-     *
+     * 
      * @return the password
      */
     String getPassword();

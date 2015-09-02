@@ -18,7 +18,7 @@
 package com.blackducksoftware.tools.commonframework.standard.common;
 
 /**
- * The Enum BlackDuckApplication.
+ * An enum that indicates a specific Black Duck Application.
  */
 public enum BlackDuckApplication {
 

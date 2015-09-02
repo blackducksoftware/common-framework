@@ -18,17 +18,38 @@
 
 package com.blackducksoftware.tools.commonframework.standard.codecenter.pojo;
 
+/**
+ * A plain old java object class for a Component.
+ * 
+ * @author sbillings
+ * 
+ */
 public interface ComponentPojo extends Comparable<ComponentPojo> {
 
+    /**
+     * Get component ID.
+     * 
+     * @return
+     */
     String getId();
 
+    /**
+     * Get component name.
+     * 
+     * @return
+     */
     String getName();
 
+    /**
+     * Get component version.
+     * 
+     * @return
+     */
     String getVersion();
 
     /**
-     * Might return null
-     *
+     * Get the KB ID for the component. Might return null
+     * 
      * @return
      */
     String getKbComponentId();

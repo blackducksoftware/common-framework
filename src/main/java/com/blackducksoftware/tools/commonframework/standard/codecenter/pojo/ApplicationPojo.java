@@ -20,6 +20,13 @@ package com.blackducksoftware.tools.commonframework.standard.codecenter.pojo;
 
 import java.util.Map;
 
+/**
+ * An interface for a plain old Java object representing a Code Center
+ * application.
+ * 
+ * @author sbillings
+ * 
+ */
 public interface ApplicationPojo {
 
     String getId();

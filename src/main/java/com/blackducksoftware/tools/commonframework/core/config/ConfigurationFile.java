@@ -37,19 +37,21 @@ import org.slf4j.LoggerFactory;
 import com.blackducksoftware.tools.commonframework.core.encryption.Password;
 
 /**
- * This class manages a configration file. It can load the config file into a
+ * This class manages a configuration file. It can load the config file into a
  * Properties object and save a new version, preserving the original format, in
  * which all passwords needing encryption are encrypted and adjusting the
  * password meta-properties (removing *.password.isplaintext, and inserting
  * *.properties.isencrypted, where appropriate).
- *
+ * <p>
  * Password encryption works as follows:
- *
+ * <p>
  * *.password.isencrypted missing means: encrypt this password.
+ *  <br>
  * *.password.isencrypted=true means: this password is already encrypted.
+ *  <br>
  * *.password.isencrypted=false means: do not encrypt this password
- *
- * - Users will enter plain text passwords into the config file, and the utility
+ * <p>
+ * Users will enter plain text passwords into the config file, and the utility
  * will automatically replace them in-place with encrypted passwords (setting
  * the new *.password.isencrypted property to true as it does it) unless it
  * finds *.password.isencrypted=false. - When creating a new config file, the
@@ -62,16 +64,16 @@ import com.blackducksoftware.tools.commonframework.core.encryption.Password;
  * *.password.isencrypted=false. - All password properties must be of the
  * pattern *.password. All properties of the form *.password must be passwords
  * that are subject to these encryption rules.
- *
+ * <p>
  * Legacy config file handling:
- *
+ * <p>
  * *.isplaintext=true means the password is plain text *.isplaintext=false means
  * the password is base64-encoded (which is now an obsolete representation)
  * *.isplaintext missing means the password is plain text (at least that's what
  * we'll assume) In this scenario, if the password looks like it might be
  * base64-encoded, a warning is written to the log by ConfigurationPassword.
- *
- * - The property *.password.isplaintext, if present, will determine whether the
+ * <p>
+ * The property *.password.isplaintext, if present, will determine whether the
  * utility reads the password as plain text (true) or base64-encoded (false). If
  * isplaintext=true was present, the password will be left in plain text, and
  * the isplaintext property will be replaced with isencrypted=false. - The
@@ -83,7 +85,7 @@ import com.blackducksoftware.tools.commonframework.core.encryption.Password;
  * invalid encrypted password. When a utility encounters a non-encrypted
  * password that matches the base64-encoded pattern, it will write a warning to
  * the log which should make it easier to troubleshoot this scenario.
- *
+ * <p>
  * All isplaintext properties will be removed. If it does not exist, the
  * isencrypted property will be inserted. There is never any need to change the
  * value of an existing isencrypted property.

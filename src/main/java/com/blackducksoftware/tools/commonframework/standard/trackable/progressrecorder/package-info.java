@@ -15,33 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *******************************************************************************/
-package com.blackducksoftware.tools.commonframework.standard.common;
-
-import java.util.List;
-
-import com.blackducksoftware.tools.commonframework.standard.protex.ProtexProjectPojo;
-
 /**
- * The Interface for classes that can launch an interactive command line window
- * that asks the user to select a project from a list.
+ * This package contains various forms of ProgressRecorders. 
+ * A ProgressRecorder records the progress of a (usually long-running) trackable task
+ * by, say, writing progress to a log, or adding progress updates to a queue.
+ * 
  */
-public interface CommandLineShell {
-
-    /**
-     * Launches an interactive command line window Asks the user to select the
-     * project and returns the selection.
-     * 
-     * User
-     * {@link com.blackducksoftware.tools.commonframework.protex.ProtexWrapper }
-     * to retrieve the list of projects.
-     * 
-     * @param projectList
-     *            the project list
-     * @return the project pojo
-     * @throws Exception
-     *             the exception
-     */
-    ProtexProjectPojo runProjectSelector(List<ProtexProjectPojo> projectList)
-	    throws Exception;
-
-}
+package com.blackducksoftware.tools.commonframework.standard.trackable.progressrecorder;

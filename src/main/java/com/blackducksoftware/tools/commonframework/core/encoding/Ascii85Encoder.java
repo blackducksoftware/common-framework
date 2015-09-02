@@ -24,7 +24,7 @@ import org.apache.commons.codec.DecoderException;
  * must be a byte array whose length is a multiple of 4. The encoded Ascii85
  * data will consist of printable ASCII characters, and will have a length 25%
  * longer than the original data.
- * 
+ * <p>
  * Ascii85 encode/decode algorithms adapted from https://pdfbox.apache.org/
  * org.apache.pdfbox.io package. I've done a significant amount of refactoring
  * to make the code more readable, but it could use more.

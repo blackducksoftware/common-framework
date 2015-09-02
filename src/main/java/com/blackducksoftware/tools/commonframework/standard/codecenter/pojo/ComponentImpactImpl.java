@@ -19,6 +19,12 @@ package com.blackducksoftware.tools.commonframework.standard.codecenter.pojo;
 
 import java.util.List;
 
+/**
+ * Manages where-used information for a component.
+ * 
+ * @author sbillings
+ * 
+ */
 public class ComponentImpactImpl implements ComponentImpact {
 
     private ComponentPojo component;

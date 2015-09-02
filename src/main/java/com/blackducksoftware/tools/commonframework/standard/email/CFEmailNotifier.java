@@ -57,15 +57,15 @@ import com.blackducksoftware.tools.commonframework.standard.common.ProjectPojo;
 
 /**
  * Generic Email Notifier implementation for the Common Framework,
- *
+ * 
  * Usage: Instantiate class with configuration manager Invoke configuration for
  * your template file and get a content map Send email with populated content
  * map
- *
+ * 
  * @author Ari Kamen
  * @date June 15th, 2015
- *
- *
+ * 
+ * 
  */
 public class CFEmailNotifier implements EmailNotifier {
     private final Logger log = LoggerFactory.getLogger(this.getClass()
@@ -106,7 +106,7 @@ public class CFEmailNotifier implements EmailNotifier {
     /**
      * Populates the internal value map containing only those variables that
      * have specifically been provided in the template.
-     *
+     * 
      * @param projectInfo
      * @param templateString
      *            **Absolute Path** of the template file.
@@ -178,7 +178,7 @@ public class CFEmailNotifier implements EmailNotifier {
 
     /**
      * Informs the user whether the Emailer is ready to be used!
-     *
+     * 
      * @return
      */
     public boolean isConfigured() {
@@ -187,7 +187,7 @@ public class CFEmailNotifier implements EmailNotifier {
 
     /**
      * Sends the email.
-     *
+     * 
      * @param projectInfo
      *            - Protex project
      * @param content
@@ -383,7 +383,7 @@ public class CFEmailNotifier implements EmailNotifier {
 
     /**
      * This is the actual java mail execution.
-     *
+     * 
      * @param notification
      */
     private void send(EmailTemplate notification) {
@@ -456,7 +456,7 @@ public class CFEmailNotifier implements EmailNotifier {
 
     /**
      * Reads the user provided template file and converts to a string
-     *
+     * 
      * @return
      * @throws Exception
      */
@@ -475,6 +475,12 @@ public class CFEmailNotifier implements EmailNotifier {
 	return templateBody;
     }
 
+    /**
+     * Get the EmailContentMap that has been configured.
+     * 
+     * @return
+     * @throws CommonFrameworkException
+     */
     public EmailContentMap getEmailContentMap() throws CommonFrameworkException {
 	if (emailContentMap == null) {
 	    throw new CommonFrameworkException("No content map configured!");
@@ -482,10 +488,20 @@ public class CFEmailNotifier implements EmailNotifier {
 	return emailContentMap;
     }
 
+    /**
+     * Get the list of EmailTriggerRules.
+     * 
+     * @return
+     */
     public List<EmailTriggerRule> getRules() {
 	return rules;
     }
 
+    /**
+     * Set the EmailTriggerRules.
+     * 
+     * @param triggerRules
+     */
     private void setRules(List<EmailTriggerRule> triggerRules) {
 	rules = triggerRules;
     }
