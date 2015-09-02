@@ -1,18 +1,17 @@
 ## Overview ##
-The CommonFramework library contains utility classes frequently used by utilities written against the Black Duck product SDKs.
-Please see wiki for more information: https://github.com/blackducksoftware/common-framework/wiki
+The CommonFramework base project contains common utility classes to make stand-alone utiltiy development easier.  This project is used by the 6.x and 7.x connectors as a direct dependency.
+
+
 ## Where can I get the latest release? ##
-You can download the latest source from GitHub: https://github.com/blackducksoftware/common-framework. You can pull the binary from BinTray via Maven:
-```
-<dependency>
-	  <groupId>com.blackducksoftware.tools.</groupId>
-	  <artifactId>common-framework</artifactId>
-	  <version>1.5.0</version>
-</dependency>
-```
-## Contributing ##
-This section will be updated when we are ready to accept contributions.
+You can download the latest source from GitHub: https://github.com/blackducksoftware/common-framework. 
+
+You can pull the binary from BinTray via Maven (we recommend using the connectors instead): https://bintray.com/bds/tools/common-framework/view
+
+## Documentation ##
+
+Please see wiki for more information: https://github.com/blackducksoftware/common-framework/wiki
+
 ## License ##
 GNU General Public License v2.0 only.
 
-> Written with [StackEdit](https://stackedit.io/).
+
