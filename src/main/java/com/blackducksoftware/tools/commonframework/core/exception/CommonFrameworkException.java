@@ -24,9 +24,9 @@ import com.blackducksoftware.tools.commonframework.core.config.server.ServerBean
 
 /**
  * Exception thrown by CommonFramework classes.
- * 
+ *
  * @author sbillings
- * 
+ *
  */
 public class CommonFrameworkException extends Exception implements Serializable {
 
@@ -46,10 +46,13 @@ public class CommonFrameworkException extends Exception implements Serializable 
     /**
      * Get a string containing the server and username, if the thrower provided
      * it.
-     * 
+     *
      * @return
      */
     public String getConfigurationInformation() {
+	if (cf == null) {
+	    return "<server and user information not available>";
+	}
 	StringBuilder sb = new StringBuilder();
 
 	ServerBean server = cf.getServerBean();
