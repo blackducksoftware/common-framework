@@ -149,6 +149,11 @@
 			<version>9.1-901-1.jdbc4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>3.5</version>
+		</dependency>
 	</dependencies>
 	<description>
 		Solutions Engineering Common Framework
