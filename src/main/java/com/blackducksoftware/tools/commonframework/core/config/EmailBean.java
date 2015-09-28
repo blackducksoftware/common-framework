@@ -21,12 +21,7 @@
  */
 package com.blackducksoftware.tools.commonframework.core.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-
-import com.blackducksoftware.tools.commonframework.standard.email.EmailTriggerRule;
 
 /**
  * Basic email config bean to hold email information, if provided
@@ -53,8 +48,6 @@ public class EmailBean {
     private Integer smtpPort;
 
     private String emailProtocol;
-
-    private List<EmailTriggerRule> rules = new ArrayList<EmailTriggerRule>();
 
     public EmailBean() {
 
@@ -131,27 +124,6 @@ public class EmailBean {
 
     public void setEmailProtocol(String emailProtocol) {
 	this.emailProtocol = emailProtocol;
-    }
-
-    public List<EmailTriggerRule> getTriggerRules() {
-	return rules;
-    }
-
-    /**
-     * Parse the comma separated rules into a map
-     *
-     * @param triggerRules
-     */
-    public void setTriggerRules(String triggerRules) {
-	if (triggerRules != null && triggerRules.length() > 0) {
-	    String[] rulesStrings = triggerRules.split(",");
-	    for (String ruleStr : rulesStrings) {
-		if (ruleStr.length() > 0) {
-		    EmailTriggerRule newRule = new EmailTriggerRule(ruleStr);
-		    rules.add(newRule);
-		}
-	    }
-	}
     }
 
 }

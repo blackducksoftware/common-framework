@@ -29,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.blackducksoftware.tools.commonframework.core.config.ConfigConstants;
-import com.blackducksoftware.tools.commonframework.core.config.ConfigurationManager;
 import com.blackducksoftware.tools.commonframework.core.config.ConfigConstants.APPLICATION;
 import com.blackducksoftware.tools.commonframework.core.config.server.ServerBean;
 import com.blackducksoftware.tools.commonframework.core.config.testbeans.TestConfigurationManagerBean;
@@ -129,7 +127,7 @@ public class ConfigurationManagerTest {
     /**
      * Tests configuration manager when a fully qualified path is provided.
      */
- 
+
     @Test
     public void testInitializerWithGoodFileAndGoodParams() {
 	try {
@@ -273,7 +271,7 @@ public class ConfigurationManagerTest {
 
     /**
      * Test single use of config file.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -304,8 +302,8 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testEmailRules() {
-	List<EmailTriggerRule> emailRules = protexCM.getEmailConfiguration()
-		.getTriggerRules();
+	List<EmailTriggerRule> emailRules = protexCM
+		.getNotificationRulesConfiguration().getRules();
 
 	Assert.assertEquals(2, emailRules.size());
 
