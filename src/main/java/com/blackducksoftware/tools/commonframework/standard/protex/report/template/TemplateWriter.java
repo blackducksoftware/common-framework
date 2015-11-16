@@ -28,11 +28,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,25 +95,148 @@ public class TemplateWriter<T extends TemplatePojo> {
      *             the exception
      */
     public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
-	    Class<T> pojoClass) throws Exception {
-	this.pojoClass = pojoClass;
-	testReflectionMappings(templateSheet, pojoList.get(0));
+    		Class<T> pojoClass) throws Exception {
+    	this.pojoClass = pojoClass;
+    	testReflectionMappings(templateSheet, pojoList.get(0));
 
-	book = templateReader.getInternalWorkBook();
+    	book = templateReader.getInternalWorkBook();
 
-	Map<String, TemplateColumn> columnMap = templateSheet.getColumnMap();
+    	Map<String, TemplateColumn> columnMap = templateSheet.getColumnMap();
 
-	Sheet activeSheet = book.getSheet(templateSheet.getSheetName());
+    	Sheet activeSheet = book.getSheet(templateSheet.getSheetName());
 
-	int i = 1;
-	for (TemplatePojo pojo : pojoList) {
-	    Row activeRow = activeSheet.createRow(i);
-	    writePojoValuesToRow(activeRow, pojo, columnMap);
-	    i++;
-	}
+    	int i = 1;
+    	for (TemplatePojo pojo : pojoList) {
+    		Row activeRow = activeSheet.createRow(i);
+    		writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap);
+    		i++;
+    	}
 
-	writeWorkBook(book);
+    	writeWorkBook(book);
     }
+
+
+    
+    /**
+     * Write pojo values to row for the provided sheet.
+     * @param activeSheet the provided sheet for pojo values write out to the rows 
+     * @param activeRow
+     *            the active row
+     * @param pojo
+     *            the pojo
+     * @param columnMap
+     *            the column map
+     */
+    private void writePojoValuesToRow(Sheet activeSheet, 
+    		Row activeRow,
+    		TemplatePojo pojo,
+    		Map<String, TemplateColumn> columnMap){
+
+    	Iterator<String> it = columnMap.keySet().iterator();
+    	while (it.hasNext())
+    	{
+    		String key = it.next();
+    		TemplateColumn column = columnMap.get(key);
+    		Integer position = column.getColumnPos();
+    		CellStyle styleFromTemplate = column.getCellStyle();
+
+    		Cell activeCell;
+    		int cellType = column.getCellType();
+    		if (cellType == Cell.CELL_TYPE_FORMULA) {
+    			activeCell = activeRow.createCell(position, Cell.CELL_TYPE_FORMULA);
+    			log.debug("Active Cell is PartOfArrayFormulaGroup: " + activeCell.isPartOfArrayFormulaGroup());
+    		}
+    		else if (cellType == Cell.CELL_TYPE_NUMERIC) {
+    			activeCell = activeRow.createCell(position, Cell.CELL_TYPE_NUMERIC);
+    		}
+    		else {
+    			activeCell = activeRow.createCell(position, Cell.CELL_TYPE_STRING);
+    		}
+
+    		// Set the value
+    		String pojoValue = getValueFromPojo(pojo, column.getLookupMappingName());
+    		activeCell.setCellValue(pojoValue);
+
+    		// Set the cell style
+    		// TODO: This catches the XML Disconnected exception, but the styles come out all wrong on subsequent
+    		// sheets.
+    		// Appears to only happen in the unit tests.
+    		try {
+    			CellStyle newcs = book.createCellStyle();
+    			newcs.cloneStyleFrom(styleFromTemplate);
+    			activeCell.setCellStyle(newcs);
+    		} catch (Exception e)
+    		{
+    			log.warn("Unable to copy cell styles!" + e.getMessage());
+    		}
+
+    		if (cellType == Cell.CELL_TYPE_FORMULA) {
+    			copyFormula(activeSheet, activeCell, activeRow, column);
+    		}
+    	}
+    }
+
+    
+    /**
+     * Handles copying the formula for the provided sheet and active row
+     * @param sheet the provided sheet
+     * @param targetCell the target cell to copy the formula
+     * @param activeRow the active row
+     * @param column the TemplateColumn to be used for 
+     */
+    private void copyFormula(Sheet sheet, Cell targetCell, Row activeRow, TemplateColumn column) {
+        if (targetCell == null || sheet == null || 
+        		targetCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+            return;
+        }
+ 
+        String formula = column.getCellFormula();
+
+        int shiftRows = activeRow.getRowNum() - 1;
+        int shiftCols = 0; 
+
+        XSSFEvaluationWorkbook workbookWrapper =
+                XSSFEvaluationWorkbook.create((XSSFWorkbook) sheet.getWorkbook());
+
+        Ptg[] ptgs = FormulaParser.parse(formula,
+                workbookWrapper,
+                FormulaType.CELL,
+                sheet.getWorkbook().getSheetIndex(sheet));
+
+        for (Ptg ptg : ptgs) {
+            if (ptg instanceof RefPtgBase)  
+            {
+                RefPtgBase ref = (RefPtgBase) ptg;
+                if (ref.isColRelative()) {
+                    ref.setColumn(ref.getColumn() + shiftCols);
+                }
+                if (ref.isRowRelative()) {
+                    ref.setRow(ref.getRow() + shiftRows);
+                }
+            } else if (ptg instanceof AreaPtg)  
+            {
+                AreaPtg ref = (AreaPtg) ptg;
+                if (ref.isFirstColRelative()) {
+                    ref.setFirstColumn(ref.getFirstColumn() + shiftCols);
+                }
+                if (ref.isLastColRelative()) {
+                    ref.setLastColumn(ref.getLastColumn() + shiftCols);
+                }
+                if (ref.isFirstRowRelative()) {
+                    ref.setFirstRow(ref.getFirstRow() + shiftRows);
+                }
+                if (ref.isLastRowRelative()) {
+                    ref.setLastRow(ref.getLastRow() + shiftRows);
+                }
+            }
+        }
+
+        formula = FormulaRenderer.toFormulaString(workbookWrapper, ptgs);
+        targetCell.setCellFormula(formula);
+        log.debug("Set Formula for row " + activeRow.getRowNum() + " : " + formula);
+        targetCell.setAsActiveCell();
+    }
+
 
     /**
      * Write work book.
