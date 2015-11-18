@@ -46,6 +46,16 @@ public class AdHocElement implements HocElement {
     private Document doc;
 
     /**
+     * Is this element is vertical
+     */
+    private Boolean isVertical = false;
+    
+    /**
+     * Checks to see if the internal map is populated
+     */
+    private Boolean isEmpty = false;
+    
+    /**
      * Instantiates a new ad hoc element.
      */
     public AdHocElement() {
@@ -144,5 +154,21 @@ public class AdHocElement implements HocElement {
 	doc = Jsoup.parseBodyFragment(headerDoc);
 	this.doc = doc;
     }
+
+    public Boolean isVertical() {
+	return isVertical;
+    }
+
+    public void setIsVertical(Boolean isVertical) {
+	this.isVertical = isVertical;
+    }
+
+    public Boolean isEmpty() {
+	if(this.internalMap.keySet().size() > 0)
+	    return false;
+	else
+	    return true;
+    }
+
 
 }
