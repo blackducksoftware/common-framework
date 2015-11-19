@@ -45,11 +45,11 @@ import com.blackducksoftware.tools.commonframework.standard.protex.report.model.
  * <li>Creates internal {@link TemplateSheet } with populated columns. <li>Can
  * optionally associate {@link ConfigurationManager } and user specified
  * mappings.
- *
+ * 
  * @author akamen
  * @see ConfigurationManager#getMappings() ConfigurationManager.getMappings()
  *      for more info
- *
+ * 
  * <br>
  * <br>
  */
@@ -85,7 +85,7 @@ public class TemplateReader {
 
     /**
      * Optional constructor.
-     *
+     * 
      * @param cm
      *            the cm
      */
@@ -94,8 +94,9 @@ public class TemplateReader {
     }
 
     /**
-     * Copies one excel file into another Populates internal mappings.
-     *
+     * Copies one excel file into another Populates internal mappings. ONLY USE
+     * THIS IF THE TEMPLATE IS AN INTERNAL RESOURCE
+     * 
      * @param templateName
      *            the template name
      * @param outputLocation
@@ -125,9 +126,31 @@ public class TemplateReader {
     }
 
     /**
+     * Copies a template from outside the resource bundle.
+     * 
+     * @param templateFile
+     * @param reportFile
+     * @throws Exception
+     */
+    public void copyTemplateIntoFile(File templateFile, File outputLocation)
+	    throws Exception {
+	this.outputLocation = outputLocation;
+	FileUtils.copyFile(templateFile, outputLocation);
+	log.info("Finished copying from template: " + templateFile);
+
+	String fileName = outputLocation.getName();
+	if (fileName.endsWith("xlsx")) {
+	    templateBook = generateWorkBookFromFile(outputLocation);
+	}
+
+	populateTemplateMap();
+
+    }
+
+    /**
      * Populates the internal maps based on user specified columns This is used
      * to gain TemplateColumn info from existing sheets (non-templates).
-     *
+     * 
      * @param book
      *            the book
      * @param columnNames
@@ -149,7 +172,7 @@ public class TemplateReader {
 
     /**
      * Populates the template sheets and columns.
-     *
+     * 
      * @throws Exception
      *             the exception
      */
@@ -166,7 +189,7 @@ public class TemplateReader {
     /**
      * Optionally checks to see if a configuration is provided and attemps to
      * map user specified mappings to the column objects.
-     *
+     * 
      * @param columnMap
      *            the column map
      */
@@ -191,7 +214,7 @@ public class TemplateReader {
 
     /**
      * Helper method to generate and retrieve a WorkBook from a file.
-     *
+     * 
      * @param workBookFile
      *            the work book file
      * @return the workbook
@@ -222,7 +245,7 @@ public class TemplateReader {
 
     /**
      * Called by the TemplateReader.
-     *
+     * 
      * @param sheet
      *            the sheet
      * @param templateSheet
@@ -280,7 +303,7 @@ public class TemplateReader {
 
     /**
      * Populate columns.
-     *
+     * 
      * @param sheet
      *            the sheet
      * @param templateSheet
@@ -321,7 +344,7 @@ public class TemplateReader {
 
     /**
      * Gets the sheet map.
-     *
+     * 
      * @return the sheet map
      */
     public Map<String, TemplateSheet> getSheetMap() {
@@ -330,7 +353,7 @@ public class TemplateReader {
 
     /**
      * Retrieve the internal workbook.
-     *
+     * 
      * @return the internal work book
      */
     public Workbook getInternalWorkBook() {
@@ -339,7 +362,7 @@ public class TemplateReader {
 
     /**
      * Checks if is processing required.
-     *
+     * 
      * @return true, if is processing required
      */
     public boolean isProcessingRequired() {
@@ -348,7 +371,7 @@ public class TemplateReader {
 
     /**
      * Sets the processing required.
-     *
+     * 
      * @param isProcessingRequired
      *            the new processing required
      */
@@ -358,7 +381,7 @@ public class TemplateReader {
 
     /**
      * Checks if is lookup required.
-     *
+     * 
      * @return true, if is lookup required
      */
     public boolean isLookupRequired() {
@@ -367,7 +390,7 @@ public class TemplateReader {
 
     /**
      * Sets the lookup required.
-     *
+     * 
      * @param isLookupRequired
      *            the new lookup required
      */
@@ -377,10 +400,11 @@ public class TemplateReader {
 
     /**
      * Gets the output location.
-     *
+     * 
      * @return the output location
      */
     public File getOutputLocation() {
 	return outputLocation;
     }
+
 }
