@@ -353,7 +353,7 @@ public class TemplateWriter<T extends TemplatePojo> {
 	    if (value == null) {
 		missingPojoMethods = true;
 		missingMethods.add(lookupName);
-		log.error("Missing method: lookupName = " + lookupName);
+		log.error("Missing method: lookupName = " + lookupName + " for column " + column.getColumnName());
 	    }
 
 	}
@@ -406,9 +406,9 @@ public class TemplateWriter<T extends TemplatePojo> {
 	String value = null;
 	String lookUpMethodName = "get" + lookupMappingName;
 
-	try {
-	    Method method = pojoClass.getDeclaredMethod(lookUpMethodName);
-
+	try {	
+	    Method method = pojo.getClass().getDeclaredMethod(lookUpMethodName);
+ 
 	    if (method == null) {
 		log.warn("Method for the pojo class does not exist with name: "
 			+ lookUpMethodName);
