@@ -114,7 +114,7 @@ public class TemplateWriterTest extends TemplateTestConstants {
 	TemplateWriter<TestPojo> tw = new TemplateWriter<TestPojo>(templateReader);
 
 	// Write out the data
-	tw.writeOutPojo(pojoList, ts, TestPojo.class);
+	tw.writeOutPojo(pojoList, ts, TestPojo.class, TemplateWriter.EXIT_ON_MAPPING_ERRORS);
 
 	outputBook = TemplateReader.generateWorkBookFromFile(workingFile);
     }
@@ -148,14 +148,14 @@ public class TemplateWriterTest extends TemplateTestConstants {
 	pojo.setValue2page2(POJO_TV_2);
 
 	try {
-	    tw.writeOutPojo(pojoList, tsOne, TestPojo.class);
+	    tw.writeOutPojo(pojoList, tsOne, TestPojo.class, TemplateWriter.EXIT_ON_MAPPING_ERRORS);
 
 	    // When writing the second sheet, make sure only the new POJOs are there
 	    // Instead of clearing the list, create a new one to match the java type
 	    pojoList.clear();
 	    pojoList.add(pojo);
 
-	    tw.writeOutPojo(pojoList, tsTwo, TestPojoPageTwo.class);
+	    tw.writeOutPojo(pojoList, tsTwo, TestPojoPageTwo.class, TemplateWriter.EXIT_ON_MAPPING_ERRORS);
 	} catch (Exception e) {
 	    Assert.fail(e.getMessage());
 	}
@@ -230,7 +230,7 @@ public class TemplateWriterTest extends TemplateTestConstants {
 	TemplateSheet ts = templateReader.getSheetMap().get(TEST_SHEET_NAME);
 
 	// Write out the data
-	tw.writeOutPojo(pojoList, ts, BadTestPojo.class);
+	tw.writeOutPojo(pojoList, ts, BadTestPojo.class, TemplateWriter.EXIT_ON_MAPPING_ERRORS);
 
     }
 
@@ -261,7 +261,7 @@ public class TemplateWriterTest extends TemplateTestConstants {
 	TemplateWriter<TestPojo> tw = new TemplateWriter<TestPojo>(templateReader);
 
 	// Write out the data
-	tw.writeOutPojo(pojoList, ts, TestPojo.class);
+	tw.writeOutPojo(pojoList, ts, TestPojo.class, TemplateWriter.EXIT_ON_MAPPING_ERRORS);
 
     }
 

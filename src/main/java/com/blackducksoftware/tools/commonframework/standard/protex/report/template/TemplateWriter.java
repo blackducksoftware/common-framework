@@ -62,6 +62,13 @@ public class TemplateWriter<T extends TemplatePojo> {
     private final Logger log = LoggerFactory.getLogger(this.getClass()
 	    .getName());
 
+    /**
+     * Flags to instruct the TemplateWriter to either ignore or proceed on mapping errors
+     * Mapping errors are where the Pojo methods do not match to the columns
+     */
+    public static final Boolean IGNORE_MAPPING_ERRORS = true;
+    public static final Boolean EXIT_ON_MAPPING_ERRORS = false;
+    
     /** The template reader. */
     private final TemplateReader templateReader;
 
@@ -91,13 +98,14 @@ public class TemplateWriter<T extends TemplatePojo> {
      *            the template sheet
      * @param pojoClass
      *            the pojo class
+     * @param ignoreMissingColumns - if true, proceeds despite missing mappings (will write out what it can)
      * @throws Exception
      *             the exception
      */
     public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
-    		Class<T> pojoClass) throws Exception {
+    		Class<T> pojoClass, boolean ignoreMissingColumns) throws Exception {
     	this.pojoClass = pojoClass;
-    	testReflectionMappings(templateSheet, pojoList.get(0));
+    	testReflectionMappings(templateSheet, pojoList.get(0), ignoreMissingColumns);
 
     	book = templateReader.getInternalWorkBook();
 
@@ -329,10 +337,11 @@ public class TemplateWriter<T extends TemplatePojo> {
      *            the template sheet
      * @param pojo
      *            the pojo
+     * @param ignoreMissingColumns 
      * @throws Exception
      *             If Mappings are wrong
      */
-    private void testReflectionMappings(TemplateSheet templateSheet, T pojo)
+    private void testReflectionMappings(TemplateSheet templateSheet, T pojo, boolean ignoreMissingColumns)
 	    throws Exception {
 	boolean missingMappings = false;
 	boolean missingPojoMethods = false;
@@ -361,12 +370,18 @@ public class TemplateWriter<T extends TemplatePojo> {
 	if (missingMappings) {
 	    Collections.sort(missingNames);
 	    String prettyListStr = getPrettyList(missingNames);
-	    throw new Exception("Columns missing mapping: " + prettyListStr);
+	    if(ignoreMissingColumns)
+		log.debug("Proceeding with writing, despite missing mappings for: " + prettyListStr);
+	    else
+		throw new Exception("Columns missing mapping: " + prettyListStr);
 	}
 	if (missingPojoMethods) {
 	    Collections.sort(missingMethods);
 	    String prettyListStr = getPrettyList(missingMethods);
-	    throw new Exception("Methods missing from POJO: " + prettyListStr);
+	    if(ignoreMissingColumns)
+		log.debug("Proceeding with writing, despite missing methods: " + prettyListStr);
+	    else
+		throw new Exception("Methods missing from POJO: " + prettyListStr);
 	}
 
     }
