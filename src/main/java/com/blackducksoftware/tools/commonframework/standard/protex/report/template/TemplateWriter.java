@@ -422,8 +422,9 @@ public class TemplateWriter<T extends TemplatePojo> {
 	String lookUpMethodName = "get" + lookupMappingName;
 
 	try {	
-	    Method method = pojo.getClass().getDeclaredMethod(lookUpMethodName);
- 
+	    // Use method instead of declared to handle any class extension that may take place.
+	    Method method = pojo.getClass().getMethod(lookUpMethodName);
+	    pojo.getClass().getDeclaredMethods();
 	    if (method == null) {
 		log.warn("Method for the pojo class does not exist with name: "
 			+ lookUpMethodName);
