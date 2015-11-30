@@ -435,8 +435,7 @@ public class TemplateWriter<T extends TemplatePojo> {
 	    value = (ret == null) ? "" : ret.toString();
 
 	} catch (Exception e) {
-	    log.warn("Unable to reflectively get value for method: "
-		    + lookupMappingName);
+	    log.warn("Unable to reflectively get value for method: " +   lookupMappingName + " - POJO Class: " + pojo.getClass().getSimpleName());
 	}
 
 	return value;
