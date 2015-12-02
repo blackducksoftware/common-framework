@@ -557,9 +557,9 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 			if (mappings.containsKey(columnKey)) {
 			    String existingMethod = mappings.get(columnKey);
 			    if (!mappingMethod.equals(existingMethod)) {
-				throw new IllegalArgumentException("The key [" + 
+				throw new IllegalArgumentException(
 					columnKey
-						+ "] is mapped more than once to non-unique methods.");
+						+ " is mapped more than once to non-unique methods.");
 			    }
 			}
 
