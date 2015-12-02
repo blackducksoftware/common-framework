@@ -76,13 +76,13 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Before
     public void createEmptyWorkDir() throws IOException {
-	// In order to test the mappings, bring in a ConfigManager
-	String fullLocation = ClassLoader.getSystemResource(
-		ConfigurationManagerTest.testFile).getFile();
-	protexCM = new TestProtexConfigurationManager(fullLocation);
+        // In order to test the mappings, bring in a ConfigManager
+        String fullLocation = ClassLoader.getSystemResource(
+                ConfigurationManagerTest.testFile).getFile();
+        protexCM = new TestProtexConfigurationManager(fullLocation);
 
-	workingFile = junitWorkingFolder.newFile("temp.xlsx");
-	notAfile = junitWorkingFolder.newFolder();
+        workingFile = junitWorkingFolder.newFile("temp.xlsx");
+        notAfile = junitWorkingFolder.newFolder();
     }
 
     /**
@@ -93,7 +93,7 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void copyTemplateIntoGoodFileTest() throws Exception {
-	tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
+        tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
     }
 
     /**
@@ -104,11 +104,11 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void copyTemplateFromMissingFile() throws Exception {
-	String bogusName = "doesnotexist_file";
+        String bogusName = "doesnotexist_file";
 
-	exception.expect(IOException.class);
-	exception.expectMessage(bogusName + " does not exist");
-	tr.copyTemplateIntoFile(bogusName, workingFile);
+        exception.expect(IOException.class);
+        exception.expectMessage(bogusName + " does not exist");
+        tr.copyTemplateIntoFile(bogusName, workingFile);
     }
 
     /**
@@ -119,8 +119,8 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void copyTemplateIntoBadLocationTest() throws Exception {
-	exception.expect(IOException.class);
-	tr.copyTemplateIntoFile(TEMPLATE_NAME, notAfile);
+        exception.expect(IOException.class);
+        tr.copyTemplateIntoFile(TEMPLATE_NAME, notAfile);
     }
 
     /**
@@ -131,9 +131,9 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void testPopulatedMap() throws Exception {
-	tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
-	Map<String, TemplateSheet> sheetMap = tr.getSheetMap();
-	Assert.assertEquals(2, sheetMap.size());
+        tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
+        Map<String, TemplateSheet> sheetMap = tr.getSheetMap();
+        Assert.assertEquals(2, sheetMap.size());
     }
 
     /**
@@ -144,26 +144,26 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void testTemplateSheet() throws Exception {
-	tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
-	Map<String, TemplateSheet> sheetMap = tr.getSheetMap();
+        tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
+        Map<String, TemplateSheet> sheetMap = tr.getSheetMap();
 
-	// First Sheet
-	TemplateSheet sheet = sheetMap.get(TEST_SHEET_NAME);
-	Map<String, TemplateColumn> columns = sheet.getColumnMap();
+        // First Sheet
+        TemplateSheet sheet = sheetMap.get(TEST_SHEET_NAME);
+        Map<String, TemplateColumn> columns = sheet.getColumnMap();
 
-	Assert.assertEquals(3, columns.size());
+        Assert.assertEquals(3, columns.size());
 
-	testColumn(columns, COLUMN_A, 0);
-	testColumn(columns, COLUMN_B, 1);
-	testColumn(columns, COLUMN_C, 2);
+        testColumn(columns, COLUMN_A, 0);
+        testColumn(columns, COLUMN_B, 1);
+        testColumn(columns, COLUMN_C, 2);
 
-	// Second sheet
-	TemplateSheet sheetTwo = sheetMap.get(TEST_SHEET_NAME_2);
-	Map<String, TemplateColumn> columnsFromSheetTwo = sheetTwo
-		.getColumnMap();
+        // Second sheet
+        TemplateSheet sheetTwo = sheetMap.get(TEST_SHEET_NAME_2);
+        Map<String, TemplateColumn> columnsFromSheetTwo = sheetTwo
+                .getColumnMap();
 
-	testColumn(columnsFromSheetTwo, COLUMN_A_2, 0);
-	testColumn(columnsFromSheetTwo, COLUMN_B_2, 1);
+        testColumn(columnsFromSheetTwo, COLUMN_A_2, 0);
+        testColumn(columnsFromSheetTwo, COLUMN_B_2, 1);
 
     }
 
@@ -175,36 +175,35 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void testTemplateSheetStylesUniqueness() throws Exception {
-	tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
-	Map<String, TemplateSheet> sheetMap = tr.getSheetMap();
+        tr.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
+        Map<String, TemplateSheet> sheetMap = tr.getSheetMap();
 
-	// First Sheet
-	TemplateSheet sheet = sheetMap.get(TEST_SHEET_NAME);
-	Map<String, TemplateColumn> columns = sheet.getColumnMap();
+        // First Sheet
+        TemplateSheet sheet = sheetMap.get(TEST_SHEET_NAME);
+        Map<String, TemplateColumn> columns = sheet.getColumnMap();
 
-	TemplateColumn columnA = columns.get(COLUMN_A);
+        TemplateColumn columnA = columns.get(COLUMN_A);
 
+        TemplateSheet sheetTwo = sheetMap.get(TEST_SHEET_NAME_2);
+        Map<String, TemplateColumn> columnsFromSheetTwo = sheetTwo
+                .getColumnMap();
 
-	TemplateSheet sheetTwo = sheetMap.get(TEST_SHEET_NAME_2);
-	Map<String, TemplateColumn> columnsFromSheetTwo = sheetTwo
-		.getColumnMap();
+        TemplateColumn columnAPageTwo = columnsFromSheetTwo.get(COLUMN_A_2);
+        TemplateColumn columnBPageTwo = columnsFromSheetTwo.get(COLUMN_B_2);
 
-	TemplateColumn columnAPageTwo = columnsFromSheetTwo.get(COLUMN_A_2);
-	TemplateColumn columnBPageTwo = columnsFromSheetTwo.get(COLUMN_B_2);
+        CellStyle columnAStyle = columnA.getCellStyle();
+        CellStyle columnBStyle = columnA.getCellStyle();
+        CellStyle columnCStyle = columnA.getCellStyle();
+        CellStyle columnAPage2Style = columnAPageTwo.getCellStyle();
+        CellStyle columnBPage2Style = columnBPageTwo.getCellStyle();
 
-	CellStyle columnAStyle = columnA.getCellStyle();
-	CellStyle columnBStyle = columnA.getCellStyle();
-	CellStyle columnCStyle = columnA.getCellStyle();
-	CellStyle columnAPage2Style = columnAPageTwo.getCellStyle();
-	CellStyle columnBPage2Style = columnBPageTwo.getCellStyle();
+        Assert.assertNotEquals(columnAStyle, columnAPage2Style);
+        Assert.assertNotEquals(columnBStyle, columnAPage2Style);
+        Assert.assertNotEquals(columnCStyle, columnAPage2Style);
 
-	Assert.assertNotEquals(columnAStyle, columnAPage2Style);
-	Assert.assertNotEquals(columnBStyle, columnAPage2Style);
-	Assert.assertNotEquals(columnCStyle, columnAPage2Style);
-
-	Assert.assertNotEquals(columnAStyle, columnBPage2Style);
-	Assert.assertNotEquals(columnBStyle, columnBPage2Style);
-	Assert.assertNotEquals(columnCStyle, columnBPage2Style);
+        Assert.assertNotEquals(columnAStyle, columnBPage2Style);
+        Assert.assertNotEquals(columnBStyle, columnBPage2Style);
+        Assert.assertNotEquals(columnCStyle, columnBPage2Style);
     }
 
     /**
@@ -216,16 +215,16 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void testTemplateSheetWithUserMappings() throws Exception {
-	trConfig = new TemplateReader(this.protexCM);
-	trConfig.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
-	Map<String, TemplateSheet> sheetMap = trConfig.getSheetMap();
+        trConfig = new TemplateReader(protexCM);
+        trConfig.copyTemplateIntoFile(TEMPLATE_NAME, workingFile);
+        Map<String, TemplateSheet> sheetMap = trConfig.getSheetMap();
 
-	TemplateSheet sheet = sheetMap.get(TEST_SHEET_NAME);
-	Map<String, TemplateColumn> columns = sheet.getColumnMap();
+        TemplateSheet sheet = sheetMap.get(TEST_SHEET_NAME);
+        Map<String, TemplateColumn> columns = sheet.getColumnMap();
 
-	testColumnMappings(columns, COLUMN_A, "Value1");
-	testColumnMappings(columns, COLUMN_B, "Value2");
-	testColumnMappings(columns, COLUMN_C, "Value4");
+        testColumnMappings(columns, COLUMN_A, "Value1");
+        testColumnMappings(columns, COLUMN_B, "Value2");
+        testColumnMappings(columns, COLUMN_C, "Value4");
 
     }
 
@@ -237,13 +236,13 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     /**
-     * Pass in excel template with no styles and make sure proper exceptions 
+     * Pass in excel template with no styles and make sure proper exceptions
      * and messages are thrown
      */
     public void testBadTemplateSheetMissingStyles() throws Exception {
-	exception.expect(Exception.class);
-	exception.expectMessage("No style row found! Please create one.");
-	tr.copyTemplateIntoFile(BAD_TEMPLATE_NO_STYLE, workingFile);
+        exception.expect(Exception.class);
+        exception.expectMessage("No style row found! Please create one.");
+        tr.copyTemplateIntoFile(BAD_TEMPLATE_NO_STYLE, workingFile);
     }
 
     /**
@@ -254,61 +253,62 @@ public class TemplateReaderTest extends TemplateTestConstants {
      */
     @Test
     public void testBadTemplateSheetBadFormat() throws Exception {
-	exception.expect(Exception.class);
-	exception
-		.expectMessage("The following style position is not defined: " + 0);
-	tr.copyTemplateIntoFile(BAD_TEMPLATE_FORMAT, workingFile);
+        exception.expect(Exception.class);
+        exception
+                .expectMessage("The following style position is not defined: " + 0);
+        tr.copyTemplateIntoFile(BAD_TEMPLATE_FORMAT, workingFile);
     }
 
     /**
      * Test the "no copy" usage that SCM Connector uses. Generate a workbook
      * from a template file, and populate the template map.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testNoCopyUsage() throws Exception {
-	Properties props = new Properties();
-	props.setProperty("protex.server.name", "not used");
-	props.setProperty("protex.user.name", "not used");
-	props.setProperty("protex.password", "not used");
-	ConfigurationManager config = new TestProtexConfigurationManager(props);
+        Properties props = new Properties();
+        props.setProperty("protex.server.name", "not used");
+        props.setProperty("protex.user.name", "not used");
+        props.setProperty("protex.password", "not used");
+        ConfigurationManager config = new TestProtexConfigurationManager(props);
 
-	// Generate a workbook from a template file, and populate the template
-	// map.
-	TemplateReader templateReader = new TemplateReader(config);
-	Workbook wb = TemplateReader.generateWorkBookFromFile(new File(
-		"src/test/resources/test_excel_template.xlsx"));
-	templateReader.populateTemplateMap();
+        // Generate a workbook from a template file, and populate the template
+        // map.
+        TemplateReader templateReader = new TemplateReader(config);
+        Workbook wb = TemplateReader.generateWorkBookFromFile(new File(
+                "src/test/resources/test_excel_template.xlsx"));
+        templateReader.setTemplateBook(wb);
+        templateReader.populateTemplateMap();
 
-	// Check the resulting workbook
-	Assert.assertEquals("test_sheet", wb.getSheetAt(0).getSheetName());
+        // Check the resulting workbook
+        Assert.assertEquals("test_sheet", wb.getSheetAt(0).getSheetName());
 
-	Assert.assertEquals("ColumnA", wb.getSheetAt(0).getRow(0).getCell(0)
-		.getStringCellValue());
-	Assert.assertEquals("ColumnB", wb.getSheetAt(0).getRow(0).getCell(1)
-		.getStringCellValue());
-	Assert.assertEquals("ColumnC", wb.getSheetAt(0).getRow(0).getCell(2)
-		.getStringCellValue());
+        Assert.assertEquals("ColumnA", wb.getSheetAt(0).getRow(0).getCell(0)
+                .getStringCellValue());
+        Assert.assertEquals("ColumnB", wb.getSheetAt(0).getRow(0).getCell(1)
+                .getStringCellValue());
+        Assert.assertEquals("ColumnC", wb.getSheetAt(0).getRow(0).getCell(2)
+                .getStringCellValue());
 
-	Assert.assertEquals("tmp", wb.getSheetAt(0).getRow(1).getCell(0)
-		.getStringCellValue());
-	Assert.assertEquals("tmp", wb.getSheetAt(0).getRow(1).getCell(1)
-		.getStringCellValue());
-	Assert.assertEquals((double) 1, wb.getSheetAt(0).getRow(1).getCell(2)
-		.getNumericCellValue(), (double) 0.01);
+        Assert.assertEquals("tmp", wb.getSheetAt(0).getRow(1).getCell(0)
+                .getStringCellValue());
+        Assert.assertEquals("tmp", wb.getSheetAt(0).getRow(1).getCell(1)
+                .getStringCellValue());
+        Assert.assertEquals(1, wb.getSheetAt(0).getRow(1).getCell(2)
+                .getNumericCellValue(), 0.01);
 
-	Assert.assertEquals("test_sheet_2", wb.getSheetAt(1).getSheetName());
+        Assert.assertEquals("test_sheet_2", wb.getSheetAt(1).getSheetName());
 
-	Assert.assertEquals("ColumnA_Sheet2", wb.getSheetAt(1).getRow(0)
-		.getCell(0).getStringCellValue());
-	Assert.assertEquals("ColumnB_Sheet2", wb.getSheetAt(1).getRow(0)
-		.getCell(1).getStringCellValue());
+        Assert.assertEquals("ColumnA_Sheet2", wb.getSheetAt(1).getRow(0)
+                .getCell(0).getStringCellValue());
+        Assert.assertEquals("ColumnB_Sheet2", wb.getSheetAt(1).getRow(0)
+                .getCell(1).getStringCellValue());
 
-	Assert.assertEquals("tmp", wb.getSheetAt(1).getRow(1).getCell(0)
-		.getStringCellValue());
-	Assert.assertEquals("tmp", wb.getSheetAt(1).getRow(1).getCell(1)
-		.getStringCellValue());
+        Assert.assertEquals("tmp", wb.getSheetAt(1).getRow(1).getCell(0)
+                .getStringCellValue());
+        Assert.assertEquals("tmp", wb.getSheetAt(1).getRow(1).getCell(1)
+                .getStringCellValue());
     }
 
     /**
@@ -323,15 +323,15 @@ public class TemplateReaderTest extends TemplateTestConstants {
      *            the expected pos
      */
     private void testColumn(Map<String, TemplateColumn> columns,
-	    String expectedName, Integer expectedPos) {
-	TemplateColumn column = columns.get(expectedName);
-	Assert.assertNotNull(column);
+            String expectedName, Integer expectedPos) {
+        TemplateColumn column = columns.get(expectedName);
+        Assert.assertNotNull(column);
 
-	Integer pos = column.getColumnPos();
-	Assert.assertEquals(expectedPos, pos);
+        Integer pos = column.getColumnPos();
+        Assert.assertEquals(expectedPos, pos);
 
-	Object cs = column.getCellStyle();
-	Assert.assertNotNull(cs);
+        Object cs = column.getCellStyle();
+        Assert.assertNotNull(cs);
 
     }
 
@@ -346,10 +346,10 @@ public class TemplateReaderTest extends TemplateTestConstants {
      *            the lookup value
      */
     private void testColumnMappings(Map<String, TemplateColumn> columns,
-	    String expectedName, String lookupValue) {
-	TemplateColumn column = columns.get(expectedName);
+            String expectedName, String lookupValue) {
+        TemplateColumn column = columns.get(expectedName);
 
-	String mappingName = column.getLookupMappingName();
-	Assert.assertEquals(lookupValue, mappingName);
+        String mappingName = column.getLookupMappingName();
+        Assert.assertEquals(lookupValue, mappingName);
     }
 }
