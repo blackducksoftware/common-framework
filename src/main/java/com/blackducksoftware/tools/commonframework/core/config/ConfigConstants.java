@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2015 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License version 2 only
  * as published by the Free Software Foundation.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License version 2
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,7 +33,7 @@ public class ConfigConstants {
      * GENERIC - Not a specific Black Duck App
      */
     public static enum APPLICATION {
-	CODECENTER, PROTEX, HUB, GENERIC
+        CODECENTER, PROTEX, HUB, GENERIC
     };
 
     // Name of the servers constant
@@ -63,25 +63,25 @@ public class ConfigConstants {
     protected static final String PROTEX_PREFIX_PROPERTY = "protex";
 
     protected static final String PROTEX_SERVER_NAME_PROPERTY = PROTEX_PREFIX_PROPERTY
-	    + "." + GENERIC_SERVER_NAME_PROPERTY_SUFFIX;
+            + "." + GENERIC_SERVER_NAME_PROPERTY_SUFFIX;
 
     protected static final String PROTEX_USER_NAME_PROPERTY = PROTEX_PREFIX_PROPERTY
-	    + "." + GENERIC_USER_NAME_PROPERTY_SUFFIX;
+            + "." + GENERIC_USER_NAME_PROPERTY_SUFFIX;
 
     protected static final String PROTEX_PASSWORD_PROPERTY = PROTEX_PREFIX_PROPERTY
-	    + "." + GENERIC_PASSWORD_PROPERTY_SUFFIX;
+            + "." + GENERIC_PASSWORD_PROPERTY_SUFFIX;
 
     // Basic CC server props
     protected static final String CODE_CENTER_PREFIX_PROPERTY = "cc";
 
     protected static final String CC_SERVER_NAME_PROPERTY = CODE_CENTER_PREFIX_PROPERTY
-	    + "." + GENERIC_SERVER_NAME_PROPERTY_SUFFIX;
+            + "." + GENERIC_SERVER_NAME_PROPERTY_SUFFIX;
 
     protected static final String CC_USER_NAME_PROPERTY = CODE_CENTER_PREFIX_PROPERTY
-	    + "." + GENERIC_USER_NAME_PROPERTY_SUFFIX;
+            + "." + GENERIC_USER_NAME_PROPERTY_SUFFIX;
 
     protected static final String CC_PASSWORD_PROPERTY = CODE_CENTER_PREFIX_PROPERTY
-	    + "." + GENERIC_PASSWORD_PROPERTY_SUFFIX;
+            + "." + GENERIC_PASSWORD_PROPERTY_SUFFIX;
 
     // OBSOLETE: Optional way to force psw to be interpreted as plain text
     protected static final String PSW_ISPLAINTEXT_PROPERTY_SUFFIX = "password.isplaintext";
@@ -90,10 +90,10 @@ public class ConfigConstants {
     protected static final String PSW_ISENCRYPTED_PROPERTY_SUFFIX = "password.isencrypted";
 
     protected static final String PROTEX_PSW_ISPLAINTEXT_PROPERTY = PROTEX_PREFIX_PROPERTY
-	    + "." + PSW_ISPLAINTEXT_PROPERTY_SUFFIX;
+            + "." + PSW_ISPLAINTEXT_PROPERTY_SUFFIX;
 
     protected static final String CC_PSW_ISPLAINTEXT_PROPERTY = CODE_CENTER_PREFIX_PROPERTY
-	    + "." + PSW_ISPLAINTEXT_PROPERTY_SUFFIX;
+            + "." + PSW_ISPLAINTEXT_PROPERTY_SUFFIX;
 
     // Mandatory Email Information
     protected final static String EMAIL_SMTP_ADDRESS = "email.smtp.address";
@@ -112,7 +112,7 @@ public class ConfigConstants {
     protected final static String EMAIL_AUTH_PASSWORD_PREFIX = "email.auth";
 
     protected final static String EMAIL_SMTP_AUTH_PASSWORD = EMAIL_AUTH_PASSWORD_PREFIX
-	    + ".password";
+            + ".password";
 
     protected final static String EMAIL_PROTOCOL = "email.protocol";
 
