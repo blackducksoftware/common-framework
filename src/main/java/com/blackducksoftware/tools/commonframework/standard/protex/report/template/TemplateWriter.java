@@ -90,7 +90,7 @@ public class TemplateWriter<T extends TemplatePojo> {
 
     /**
      * Writes out pojos to specific sheet by using internal mappings specified
-     * by the user and generates the work book
+     * by the user.
      * 
      * @param pojoList
      *            the pojo list
@@ -105,31 +105,6 @@ public class TemplateWriter<T extends TemplatePojo> {
      */
     public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
             Class<T> pojoClass, boolean ignoreMissingColumns) throws Exception {
-        writeOutPojo(pojoList,
-                templateSheet,
-                pojoClass,
-                ignoreMissingColumns,
-                true);
-    }
-
-    /**
-     * Writes out pojos to specific sheet by using internal mappings specified
-     * by the user and generated the workbook if the flag is set to true
-     * 
-     * @param pojoList
-     *            the pojo list
-     * @param templateSheet
-     *            the template sheet
-     * @param pojoClass
-     *            the pojo class
-     * @param ignoreMissingColumns
-     *            - if true, proceeds despite missing mappings (will write out what it can)
-     * @param generateWorkBook
-     *            - if true, generates the workbook
-     * @throws Exception
-     */
-    public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
-            Class<T> pojoClass, boolean ignoreMissingColumns, boolean generateWorkBook) throws Exception {
         this.pojoClass = pojoClass;
         testReflectionMappings(templateSheet, pojoList.get(0), ignoreMissingColumns);
 
@@ -146,9 +121,7 @@ public class TemplateWriter<T extends TemplatePojo> {
             i++;
         }
 
-        if (generateWorkBook) {
-            writeWorkBook(book);
-        }
+        writeWorkBook(book);
     }
 
     /**
