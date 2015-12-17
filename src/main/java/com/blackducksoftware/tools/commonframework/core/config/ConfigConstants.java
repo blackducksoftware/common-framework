@@ -139,4 +139,9 @@ public class ConfigConstants {
 
     // Template mappings
     protected static final String PROPERTY_TEMPLATE_MAPPING = "template.mapping";
+
+    // The number of SDK lines you want processed at any given time (all vs by chunks)
+    // size = 0: process the rows without chunking
+    // size > 0: process the rows by chunk size
+    public static final String PROPERTY_CHUNKING_SIZE = "sdk.chunk.size";
 }
