@@ -89,8 +89,17 @@ public class TemplateWriter<T extends TemplatePojo> {
     }
 
     /**
+     * Return the work book
+     * 
+     * @return the work book
+     */
+    public Workbook getWorkbook() {
+        return book;
+    }
+
+    /**
      * Writes out pojos to specific sheet by using internal mappings specified
-     * by the user.
+     * by the user and generates the workbook.
      * 
      * @param pojoList
      *            the pojo list
@@ -105,6 +114,71 @@ public class TemplateWriter<T extends TemplatePojo> {
      */
     public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
             Class<T> pojoClass, boolean ignoreMissingColumns) throws Exception {
+
+        writeOutPojo(pojoList, templateSheet,
+                pojoClass, ignoreMissingColumns, true);
+    }
+
+    /**
+     * Writes out pojos to specific sheet by using internal mappings specified
+     * by the user.
+     * 
+     * @param pojoList
+     *            the pojo list
+     * @param templateSheet
+     *            the template sheet
+     * @param pojoClass
+     *            the pojo class
+     * @param ignoreMissingColumns
+     *            - if true, proceeds despite missing mappings (will write out what it can, if the generateWorkBook flag
+     *            is set to true)
+     * @param generateWorkBook
+     *            - if true, proceeds with generating the workbook should be written out after the sheet processing is
+     *            complete
+     * @throws Exception
+     *             the exception
+     */
+    public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
+            Class<T> pojoClass, boolean ignoreMissingColumns, boolean generateWorkBook) throws Exception {
+
+        this.pojoClass = pojoClass;
+        testReflectionMappings(templateSheet, pojoList.get(0), ignoreMissingColumns);
+
+        book = templateReader.getInternalWorkBook();
+        Map<String, TemplateColumn> columnMap = templateSheet.getColumnMap();
+
+        Sheet activeSheet = book.getSheet(templateSheet.getSheetName());
+
+        int i = 1;
+        for (TemplatePojo pojo : pojoList) {
+            Row activeRow = activeSheet.createRow(i);
+            writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap);
+            i++;
+        }
+
+        // Write the workbook if the flag is set to true
+        if (generateWorkBook) {
+            writeWorkBook();
+        }
+    }
+
+    /**
+     * Handles writing the pojo values to row for the provided sheet
+     * 
+     * @param pojoList
+     *            the list of pojo values
+     * @param templateSheet
+     *            the template sheet
+     * @param pojoClass
+     *            the pojo class
+     * @param ignoreMissingColumns
+     *            - if true, proceeds despite missing mappings (will write out what it can)
+     * @return the updated workbook
+     * @throws Exception
+     */
+    public Workbook writeOutPojoValuesToSheet(List<T> pojoList, TemplateSheet templateSheet,
+            Class<T> pojoClass, boolean ignoreMissingColumns) throws Exception {
+
         this.pojoClass = pojoClass;
         testReflectionMappings(templateSheet, pojoList.get(0), ignoreMissingColumns);
 
@@ -120,8 +194,7 @@ public class TemplateWriter<T extends TemplatePojo> {
             writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap);
             i++;
         }
-
-        writeWorkBook(book);
+        return book;
     }
 
     /**
@@ -253,12 +326,11 @@ public class TemplateWriter<T extends TemplatePojo> {
     /**
      * Write work book.
      * 
-     * @param book
-     *            the book
      * @throws Exception
      *             the exception
      */
-    public void writeWorkBook(Workbook book) throws Exception {
+    public void writeWorkBook() throws Exception {
+
         FileOutputStream stream = null;
         File outputLocation = templateReader.getOutputLocation();
 
@@ -285,51 +357,6 @@ public class TemplateWriter<T extends TemplatePojo> {
             try {
                 stream.close();
             } catch (IOException ioe) {
-            }
-        }
-
-    }
-
-    /**
-     * Write pojo values to row.
-     * 
-     * @param activeRow
-     *            the active row
-     * @param pojo
-     *            the pojo
-     * @param columnMap
-     *            the column map
-     */
-    private void writePojoValuesToRow(Row activeRow, TemplatePojo pojo,
-            Map<String, TemplateColumn> columnMap) {
-
-        Iterator<String> it = columnMap.keySet().iterator();
-        while (it.hasNext()) {
-            String key = it.next();
-            TemplateColumn column = columnMap.get(key);
-            Integer position = column.getColumnPos();
-            CellStyle styleFromTemplate = column.getCellStyle();
-
-            // TODO: Introduce types later
-            Cell activeCell = activeRow.createCell(position,
-                    Cell.CELL_TYPE_STRING);
-            // Set the value
-
-            String pojoValue = getValueFromPojo(pojo,
-                    column.getLookupMappingName());
-            activeCell.setCellValue(pojoValue);
-
-            // Set the cell style
-            // TODO: This catches the XML Disconnected exception, but the styles
-            // come out all wrong on subsequent
-            // sheets.
-            // Appears to only happen in the unit tests.
-            try {
-                CellStyle newcs = book.createCellStyle();
-                newcs.cloneStyleFrom(styleFromTemplate);
-                activeCell.setCellStyle(newcs);
-            } catch (Exception e) {
-                log.warn("Unable to copy cell styles!" + e.getMessage());
             }
         }
     }
