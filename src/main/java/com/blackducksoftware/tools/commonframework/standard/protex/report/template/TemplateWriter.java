@@ -329,6 +329,16 @@ public class TemplateWriter<T extends TemplatePojo> {
     /**
      * Write work book.
      * 
+     * @throws Exception
+     *             the exception
+     */
+    public void writeWorkBook() throws Exception {
+        writeWorkBook(true);
+    }
+
+    /**
+     * Write work book.
+     * 
      * @param workbookUpdatePeriodic
      *            indicator for workbook periodic update after each sheet processing
      * @throws Exception
