@@ -70,6 +70,13 @@ public class TemplateWriter<T extends TemplatePojo> {
      */
     public static final Boolean IGNORE_MAPPING_ERRORS = true;
 
+    // Indicator for Excel Workbook style setup - will be cloned and applied
+
+    public static final Boolean WORKBOOK_STYLE_CLONE_TRUE = true;
+
+    // Indicator for Excel Workbook style setup - will not be cloned and applied
+    public static final Boolean WORKBOOK_STYLE_CLONE_FALSE = false;
+
     public static final Boolean EXIT_ON_MAPPING_ERRORS = false;
 
     /** The template reader. */
@@ -118,8 +125,12 @@ public class TemplateWriter<T extends TemplatePojo> {
     public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
             Class<T> pojoClass, boolean ignoreMissingColumns) throws Exception {
 
-        writeOutPojo(pojoList, templateSheet,
-                pojoClass, ignoreMissingColumns, true);
+        writeOutPojo(pojoList,
+                templateSheet,
+                pojoClass,
+                ignoreMissingColumns,
+                IGNORE_MAPPING_ERRORS,
+                WORKBOOK_STYLE_CLONE_TRUE);
     }
 
     /**
@@ -138,11 +149,13 @@ public class TemplateWriter<T extends TemplatePojo> {
      * @param generateWorkBook
      *            - if true, proceeds with generating the workbook should be written out after the sheet processing is
      *            complete
+     * @param cloneStyle
+     *            - if true, apply the styles to the new cells
      * @throws Exception
      *             the exception
      */
     public void writeOutPojo(List<T> pojoList, TemplateSheet templateSheet,
-            Class<T> pojoClass, boolean ignoreMissingColumns, boolean generateWorkBook) throws Exception {
+            Class<T> pojoClass, boolean ignoreMissingColumns, boolean generateWorkBook, boolean cloneStyle) throws Exception {
 
         this.pojoClass = pojoClass;
         testReflectionMappings(templateSheet, pojoList.get(0), ignoreMissingColumns);
@@ -151,16 +164,11 @@ public class TemplateWriter<T extends TemplatePojo> {
         Map<String, TemplateColumn> columnMap = templateSheet.getColumnMap();
 
         Sheet activeSheet = book.getSheet(templateSheet.getSheetName());
-
         int i = 1;
-        Iterator<T> iter = pojoList.iterator();
-        while (iter.hasNext()) {
+        for (TemplatePojo pojo : pojoList) {
             Row activeRow = activeSheet.createRow(i);
-            TemplatePojo pojo = iter.next();
-            writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap);
-            log.debug("Flushing from memory, internal object for row: " + i);
-            iter.remove();
-
+            writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap, cloneStyle);
+            i++;
         }
 
         // Write the workbook if the flag is set to true
@@ -198,7 +206,7 @@ public class TemplateWriter<T extends TemplatePojo> {
         int i = 1;
         for (TemplatePojo pojo : pojoList) {
             Row activeRow = activeSheet.createRow(i);
-            writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap);
+            writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap, WORKBOOK_STYLE_CLONE_TRUE);
             i++;
         }
         return book;
@@ -215,11 +223,14 @@ public class TemplateWriter<T extends TemplatePojo> {
      *            the pojo
      * @param columnMap
      *            the column map
+     * @param cloneStyle
+     *            - if true, apply the styles to the new cells
      */
     private void writePojoValuesToRow(Sheet activeSheet,
             Row activeRow,
             TemplatePojo pojo,
-            Map<String, TemplateColumn> columnMap) {
+            Map<String, TemplateColumn> columnMap,
+            boolean cloneStyle) {
 
         Iterator<String> it = columnMap.keySet().iterator();
         while (it.hasNext())
@@ -250,13 +261,15 @@ public class TemplateWriter<T extends TemplatePojo> {
             // TODO: This catches the XML Disconnected exception, but the styles come out all wrong on subsequent
             // sheets.
             // Appears to only happen in the unit tests.
-            try {
-                CellStyle newcs = book.createCellStyle();
-                newcs.cloneStyleFrom(styleFromTemplate);
-                activeCell.setCellStyle(newcs);
-            } catch (Exception e)
-            {
-                log.warn("Unable to copy cell styles!" + e.getMessage());
+            if (cloneStyle) {
+                try {
+                    CellStyle newcs = book.createCellStyle();
+                    newcs.cloneStyleFrom(styleFromTemplate);
+                    activeCell.setCellStyle(newcs);
+                } catch (Exception e)
+                {
+                    log.warn("Unable to copy cell styles!" + e.getMessage());
+                }
             }
 
             if (cellType == Cell.CELL_TYPE_FORMULA) {
@@ -351,7 +364,6 @@ public class TemplateWriter<T extends TemplatePojo> {
     public void writeWorkBook(boolean workbookUpdatePeriodic) throws Exception {
 
         FileOutputStream stream = null;
-        getMemoryInformation();
         File outputLocation = templateReader.getOutputLocation();
 
         try {
