@@ -153,10 +153,14 @@ public class TemplateWriter<T extends TemplatePojo> {
         Sheet activeSheet = book.getSheet(templateSheet.getSheetName());
 
         int i = 1;
-        for (TemplatePojo pojo : pojoList) {
+        Iterator<T> iter = pojoList.iterator();
+        while (iter.hasNext()) {
             Row activeRow = activeSheet.createRow(i);
+            TemplatePojo pojo = iter.next();
             writePojoValuesToRow(activeSheet, activeRow, pojo, columnMap);
-            i++;
+            log.debug("Flushing from memory, internal object for row: " + i);
+            iter.remove();
+
         }
 
         // Write the workbook if the flag is set to true
