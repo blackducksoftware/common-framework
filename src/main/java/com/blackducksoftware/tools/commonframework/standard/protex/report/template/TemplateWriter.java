@@ -20,6 +20,9 @@ package com.blackducksoftware.tools.commonframework.standard.protex.report.templ
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -158,7 +161,7 @@ public class TemplateWriter<T extends TemplatePojo> {
 
         // Write the workbook if the flag is set to true
         if (generateWorkBook) {
-            writeWorkBook();
+            writeWorkBook(generateWorkBook);
         }
     }
 
@@ -330,8 +333,21 @@ public class TemplateWriter<T extends TemplatePojo> {
      *             the exception
      */
     public void writeWorkBook() throws Exception {
+        writeWorkBook(true);
+    }
+
+    /**
+     * Write work book.
+     * 
+     * @param workbookUpdatePeriodic
+     *            indicator for workbook periodic update after each sheet processing
+     * @throws Exception
+     *             the exception
+     */
+    public void writeWorkBook(boolean workbookUpdatePeriodic) throws Exception {
 
         FileOutputStream stream = null;
+        getMemoryInformation();
         File outputLocation = templateReader.getOutputLocation();
 
         try {
@@ -348,7 +364,9 @@ public class TemplateWriter<T extends TemplatePojo> {
             // written to.
             // POI [Bug 49940]
             // https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
-            TemplateReader.generateWorkBookFromFile(outputLocation);
+            if (workbookUpdatePeriodic) {
+                TemplateReader.generateWorkBookFromFile(outputLocation);
+            }
 
         } catch (Exception e) {
             log.error("Fatal: " + e.getMessage());
@@ -474,4 +492,21 @@ public class TemplateWriter<T extends TemplatePojo> {
         return value;
     }
 
+    /**
+     * Print out the memory usage information
+     */
+    public void getMemoryInformation()
+    {
+        ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+        log.debug("Heap:" + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
+        log.debug("NonHeap:" + ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage());
+        List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
+        for (MemoryPoolMXBean bean : beans) {
+            log.debug(bean.getName() + ":" + bean.getUsage());
+        }
+
+        for (GarbageCollectorMXBean bean : ManagementFactory.getGarbageCollectorMXBeans()) {
+            log.debug(bean.getName() + ":" + bean.getCollectionCount() + ":" + bean.getCollectionTime());
+        }
+    }
 }
