@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2015 Black Duck Software, Inc.
+ * Copyright (C) 2016 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 /**
  * The standard login screen, with a logo, server/username/password fields, and
  * a login button.
- * 
+ *
  * @author sbillings
  *
  */
@@ -49,15 +49,16 @@ public class StandardLoginScreen {
 
     /** The Constant debugMode. */
     private static final boolean debugMode = false; // in debug mode, version
-						    // shown is of this class,
-						    // not app
+
+    // shown is of this class,
+    // not app
 
     /** The Constant LOGIN_SCREEN_VERSION_STRING. */
     private static final String LOGIN_SCREEN_VERSION_STRING = "SLS v1.0.1";
 
     /** The Constant COPYRIGHT_STRING. */
     private static final String COPYRIGHT_STRING = "\u00A9 2014 Black Duck\u00AE and the Black Duck logo are "
-	    + "registered trademarks of Black Duck Software, Inc. in the United States and/or other jurisdictions. ";
+            + "registered trademarks of Black Duck Software, Inc. in the United States and/or other jurisdictions. ";
 
     /** The browser element id. */
     private final String browserElementId;
@@ -100,8 +101,8 @@ public class StandardLoginScreen {
 
     /** The Constant SERVER_ERROR. */
     private static final String SERVER_ERROR = "An error occurred while "
-	    + "attempting to contact the server. Please check your network "
-	    + "connection and try again.";
+            + "attempting to contact the server. Please check your network "
+            + "connection and try again.";
 
     /**
      * Construct the login screen.
@@ -129,26 +130,26 @@ public class StandardLoginScreen {
      *            Path to the logo to display
      */
     public StandardLoginScreen(String clientBrowserElementId,
-	    LoginService clientLoginService, LoginHandler clientLoginHandler,
-	    AuthenticationUser loginInfo, String title,
-	    String appVersionString, String serverCookie, String userCookie,
-	    String passwordCookie, String logoPath) {
-	this.browserElementId = clientBrowserElementId;
-	this.user = loginInfo;
-	this.loginService = clientLoginService;
-	this.loginHandler = clientLoginHandler;
-	this.serverCookie = serverCookie;
-	this.userCookie = userCookie;
-	this.passwordCookie = passwordCookie;
+            LoginService clientLoginService, LoginHandler clientLoginHandler,
+            AuthenticationUser loginInfo, String title,
+            String appVersionString, String serverCookie, String userCookie,
+            String passwordCookie, String logoPath) {
+        browserElementId = clientBrowserElementId;
+        user = loginInfo;
+        loginService = clientLoginService;
+        loginHandler = clientLoginHandler;
+        this.serverCookie = serverCookie;
+        this.userCookie = userCookie;
+        this.passwordCookie = passwordCookie;
 
-	createLoginScreen(logoPath, appVersionString, title);
+        createLoginScreen(logoPath, appVersionString, title);
 
-	// Add a handler to send the name to the server
-	LoginRequestHandler handler = new LoginRequestHandler();
-	loginButton.addClickHandler(handler);
-	serverBox.addKeyPressHandler(handler);
-	userNameBox.addKeyPressHandler(handler);
-	passwordBox.addKeyPressHandler(handler);
+        // Add a handler to send the name to the server
+        LoginRequestHandler handler = new LoginRequestHandler();
+        loginButton.addClickHandler(handler);
+        serverBox.addKeyPressHandler(handler);
+        userNameBox.addKeyPressHandler(handler);
+        passwordBox.addKeyPressHandler(handler);
 
     }
 
@@ -159,8 +160,8 @@ public class StandardLoginScreen {
      *            the new error message
      */
     public void setErrorMessage(String errorMessage) {
-	errorLabel.setText(errorMessage);
-	errorLabel.setVisible(true);
+        errorLabel.setText(errorMessage);
+        errorLabel.setVisible(true);
     }
 
     /**
@@ -174,44 +175,44 @@ public class StandardLoginScreen {
      *            the title
      */
     private void createLoginScreen(String logoPath, String appVersionString,
-	    String title) {
-	Label titleLabel = buildTitleLabel(title);
-	loginButton = buildLoginButton();
-	errorLabel = buildErrorLabel();
-	RootPanel rootPanel = configureRootPanel(logoPath, titleLabel,
-		loginButton, errorLabel);
-	AbsolutePanel absolutePanel = buildAbsolutePanel();
-	rootPanel.add(absolutePanel, 162, 311);
+            String title) {
+        Label titleLabel = buildTitleLabel(title);
+        loginButton = buildLoginButton();
+        errorLabel = buildErrorLabel();
+        RootPanel rootPanel = configureRootPanel(logoPath, titleLabel,
+                loginButton, errorLabel);
+        AbsolutePanel absolutePanel = buildAbsolutePanel();
+        rootPanel.add(absolutePanel, 162, 311);
 
-	Label serverFieldLabel = buildServerLabel();
-	absolutePanel.add(serverFieldLabel, 79, 34);
+        Label serverFieldLabel = buildServerLabel();
+        absolutePanel.add(serverFieldLabel, 79, 34);
 
-	serverBox = buildServerBox();
-	absolutePanel.add(serverBox, 136, 34);
+        serverBox = buildServerBox();
+        absolutePanel.add(serverBox, 136, 34);
 
-	userNameBox = buildUserNameBox();
-	absolutePanel.add(userNameBox, 136, 70);
+        userNameBox = buildUserNameBox();
+        absolutePanel.add(userNameBox, 136, 70);
 
-	Label userFieldLabel = buildUserNameLabel();
-	absolutePanel.add(userFieldLabel, 92, 70);
+        Label userFieldLabel = buildUserNameLabel();
+        absolutePanel.add(userFieldLabel, 92, 70);
 
-	Label passwordFieldLabel = buildPasswordLabel();
-	absolutePanel.add(passwordFieldLabel, 57, 104);
+        Label passwordFieldLabel = buildPasswordLabel();
+        absolutePanel.add(passwordFieldLabel, 57, 104);
 
-	passwordBox = buildPasswordBox();
-	absolutePanel.add(passwordBox, 136, 104);
+        passwordBox = buildPasswordBox();
+        absolutePanel.add(passwordBox, 136, 104);
 
-	rememberMeCheckBox = buildRememberMeCheckBox();
-	absolutePanel.add(rememberMeCheckBox, 143, 139);
+        rememberMeCheckBox = buildRememberMeCheckBox();
+        absolutePanel.add(rememberMeCheckBox, 143, 139);
 
-	Label versionLabel = buildVersionLabel(appVersionString);
-	absolutePanel.add(versionLabel, 365, 164);
+        Label versionLabel = buildVersionLabel(appVersionString);
+        absolutePanel.add(versionLabel, 365, 164);
 
-	Label lblCopyrightBlack = buildCopyrightLabel();
-	rootPanel.add(lblCopyrightBlack, 98, 688);
+        Label lblCopyrightBlack = buildCopyrightLabel();
+        rootPanel.add(lblCopyrightBlack, 98, 688);
 
-	// Load cookie values, but do not memorize
-	loadCookies(false);
+        // Load cookie values, but do not memorize
+        loadCookies(false);
 
     }
 
@@ -221,12 +222,12 @@ public class StandardLoginScreen {
      * @return the button
      */
     private Button buildLoginButton() {
-	Button loginButton = new Button("Send");
-	loginButton.setStyleName("gwt-Login-Button");
-	loginButton.setText("Login");
-	loginButton.setSize("166px", "44px");
-	loginButton.addStyleName("sendButton");
-	return loginButton;
+        Button loginButton = new Button("Send");
+        loginButton.setStyleName("gwt-Login-Button");
+        loginButton.setText("Login");
+        loginButton.setSize("166px", "44px");
+        loginButton.addStyleName("sendButton");
+        return loginButton;
     }
 
     /**
@@ -235,11 +236,11 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildErrorLabel() {
-	Label errorLabel = new Label();
-	errorLabel.setStyleName("error-Label");
-	errorLabel.setVisible(false);
-	errorLabel.setSize("459px", "64px");
-	return errorLabel;
+        Label errorLabel = new Label();
+        errorLabel.setStyleName("error-Label");
+        errorLabel.setVisible(false);
+        errorLabel.setSize("459px", "64px");
+        return errorLabel;
     }
 
     /**
@@ -250,12 +251,12 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildTitleLabel(String title) {
-	Label titleLabel = new Label();
-	titleLabel.setStyleName("appTitle");
-	titleLabel.setVisible(true);
-	titleLabel.setSize("459px", "64px");
-	titleLabel.setText(title);
-	return titleLabel;
+        Label titleLabel = new Label();
+        titleLabel.setStyleName("appTitle");
+        titleLabel.setVisible(true);
+        titleLabel.setSize("459px", "64px");
+        titleLabel.setText(title);
+        return titleLabel;
     }
 
     /**
@@ -272,17 +273,17 @@ public class StandardLoginScreen {
      * @return the root panel
      */
     private RootPanel configureRootPanel(String logoPath, Label titleLabel,
-	    Button loginButton, Label errorLabel) {
-	RootPanel rootPanel = RootPanel.get(browserElementId);
-	rootPanel.setStyleName("RootPanel");
-	rootPanel.setSize("1280", "960");
-	Image image = new Image(logoPath);
-	rootPanel.add(image, 170, 38);
-	rootPanel.add(titleLabel, 162, 260);
-	rootPanel.add(loginButton, 309, 520); // was 309, 511
-	rootPanel.add(errorLabel, 162, 600); // was 162, 590
+            Button loginButton, Label errorLabel) {
+        RootPanel rootPanel = RootPanel.get(browserElementId);
+        rootPanel.setStyleName("RootPanel");
+        rootPanel.setSize("1280", "960");
+        Image image = new Image(logoPath);
+        rootPanel.add(image, 170, 38);
+        rootPanel.add(titleLabel, 162, 260);
+        rootPanel.add(loginButton, 309, 520); // was 309, 511
+        rootPanel.add(errorLabel, 162, 600); // was 162, 590
 
-	return rootPanel;
+        return rootPanel;
     }
 
     /**
@@ -291,10 +292,10 @@ public class StandardLoginScreen {
      * @return the absolute panel
      */
     private AbsolutePanel buildAbsolutePanel() {
-	AbsolutePanel absolutePanel = new AbsolutePanel();
-	absolutePanel.setStyleName("gwt-Login-MainBox");
-	absolutePanel.setSize("450px", "180px"); // was "450px", "174px"
-	return absolutePanel;
+        AbsolutePanel absolutePanel = new AbsolutePanel();
+        absolutePanel.setStyleName("gwt-Login-MainBox");
+        absolutePanel.setSize("450px", "180px"); // was "450px", "174px"
+        return absolutePanel;
     }
 
     /**
@@ -303,10 +304,10 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildServerLabel() {
-	Label serverFieldLabel = new Label("Server:");
-	serverFieldLabel.setStyleName("gwt-Login-Label");
-	serverFieldLabel.setSize("51px", "21px");
-	return serverFieldLabel;
+        Label serverFieldLabel = new Label("Server:");
+        serverFieldLabel.setStyleName("gwt-Login-Label");
+        serverFieldLabel.setSize("51px", "21px");
+        return serverFieldLabel;
     }
 
     /**
@@ -315,16 +316,16 @@ public class StandardLoginScreen {
      * @return the text box
      */
     private TextBox buildServerBox() {
-	TextBox serverBox = new TextBox();
-	serverBox.setStyleName("h1");
-	serverBox.setFocus(true);
-	String serverValue = debugMode ? "http://seneca.blackducksoftware.com"
-		: ".blackducksoftware.com";
-	serverBox.setText(serverValue);
-	serverBox.setAlignment(TextAlignment.LEFT);
-	serverBox.setSize("265px", "20px");
-	serverBox.setFocus(true);
-	return serverBox;
+        TextBox serverBox = new TextBox();
+        serverBox.setStyleName("h1");
+        serverBox.setFocus(true);
+        String serverValue = debugMode ? "http://seneca.blackducksoftware.com"
+                : ".blackducksoftware.com";
+        serverBox.setText(serverValue);
+        serverBox.setAlignment(TextAlignment.LEFT);
+        serverBox.setSize("265px", "20px");
+        serverBox.setFocus(true);
+        return serverBox;
     }
 
     /**
@@ -333,15 +334,15 @@ public class StandardLoginScreen {
      * @return the text box
      */
     private TextBox buildUserNameBox() {
-	TextBox userNameBox = new TextBox();
-	userNameBox.setStyleName("h1");
-	userNameBox.setFocus(true);
-	String userNameValue = debugMode ? "unitTester@blackducksoftware.com"
-		: "@blackducksoftware.com";
-	userNameBox.setText(userNameValue);
-	userNameBox.setAlignment(TextAlignment.LEFT);
-	userNameBox.setSize("265px", "20px");
-	return userNameBox;
+        TextBox userNameBox = new TextBox();
+        userNameBox.setStyleName("h1");
+        userNameBox.setFocus(true);
+        String userNameValue = debugMode ? "unitTester@blackducksoftware.com"
+                : "@blackducksoftware.com";
+        userNameBox.setText(userNameValue);
+        userNameBox.setAlignment(TextAlignment.LEFT);
+        userNameBox.setSize("265px", "20px");
+        return userNameBox;
     }
 
     /**
@@ -350,10 +351,10 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildUserNameLabel() {
-	Label userFieldLabel = new Label("User:");
-	userFieldLabel.setStyleName("gwt-Login-Label");
-	userFieldLabel.setSize("38px", "21px");
-	return userFieldLabel;
+        Label userFieldLabel = new Label("User:");
+        userFieldLabel.setStyleName("gwt-Login-Label");
+        userFieldLabel.setSize("38px", "21px");
+        return userFieldLabel;
     }
 
     /**
@@ -362,10 +363,10 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildPasswordLabel() {
-	Label passwordFieldLabel = new Label("Password:");
-	passwordFieldLabel.setStyleName("gwt-Login-Label");
-	passwordFieldLabel.setSize("73px", "21px");
-	return passwordFieldLabel;
+        Label passwordFieldLabel = new Label("Password:");
+        passwordFieldLabel.setStyleName("gwt-Login-Label");
+        passwordFieldLabel.setSize("73px", "21px");
+        return passwordFieldLabel;
     }
 
     /**
@@ -374,13 +375,13 @@ public class StandardLoginScreen {
      * @return the password text box
      */
     private PasswordTextBox buildPasswordBox() {
-	PasswordTextBox passwordBox = new PasswordTextBox();
-	passwordBox.setStyleName("h1");
-	passwordBox.setAlignment(TextAlignment.LEFT);
-	passwordBox.setSize("265px", "20px");
-	String passwordValue = debugMode ? "blackduck" : "";
-	passwordBox.setText(passwordValue);
-	return passwordBox;
+        PasswordTextBox passwordBox = new PasswordTextBox();
+        passwordBox.setStyleName("h1");
+        passwordBox.setAlignment(TextAlignment.LEFT);
+        passwordBox.setSize("265px", "20px");
+        String passwordValue = debugMode ? "blackduck" : "";
+        passwordBox.setText(passwordValue);
+        return passwordBox;
     }
 
     /**
@@ -390,11 +391,11 @@ public class StandardLoginScreen {
      */
     @SuppressWarnings("deprecation")
     private CheckBox buildRememberMeCheckBox() {
-	CheckBox rememberMeCheckBox = new CheckBox("Remember me please!");
-	rememberMeCheckBox.setStyleName("gwt-Login-RememberMe");
-	rememberMeCheckBox.setChecked(true);
-	rememberMeCheckBox.setSize("157px", "20px");
-	return rememberMeCheckBox;
+        CheckBox rememberMeCheckBox = new CheckBox("Remember me please!");
+        rememberMeCheckBox.setStyleName("gwt-Login-RememberMe");
+        rememberMeCheckBox.setChecked(true);
+        rememberMeCheckBox.setSize("157px", "20px");
+        return rememberMeCheckBox;
     }
 
     /**
@@ -405,13 +406,13 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildVersionLabel(String appVersionString) {
-	Label versionLabel = new Label("");
-	versionLabel.setStyleName("gwt-Version-Label");
-	versionLabel.setSize("93px", "36px"); // was "93px", "18px"
-	String versionToDisplay = debugMode ? LOGIN_SCREEN_VERSION_STRING
-		: appVersionString;
-	versionLabel.setText(versionToDisplay);
-	return versionLabel;
+        Label versionLabel = new Label("");
+        versionLabel.setStyleName("gwt-Version-Label");
+        versionLabel.setSize("93px", "36px"); // was "93px", "18px"
+        String versionToDisplay = debugMode ? LOGIN_SCREEN_VERSION_STRING
+                : appVersionString;
+        versionLabel.setText(versionToDisplay);
+        return versionLabel;
     }
 
     /**
@@ -420,99 +421,105 @@ public class StandardLoginScreen {
      * @return the label
      */
     private Label buildCopyrightLabel() {
-	Label lblCopyrightBlack = new Label(COPYRIGHT_STRING);
-	lblCopyrightBlack.setSize("592px", "44px");
-	return lblCopyrightBlack;
+        Label lblCopyrightBlack = new Label(COPYRIGHT_STRING);
+        lblCopyrightBlack.setSize("592px", "44px");
+        return lblCopyrightBlack;
     }
 
     /**
      * Handler for the clicks that initiate login.
-     * 
+     *
      * @author sbillings
      *
      */
     private class LoginRequestHandler implements ClickHandler, KeyUpHandler,
-	    KeyPressHandler {
+            KeyPressHandler {
 
-	public void onClick(ClickEvent event) {
-	    login();
-	}
+        @Override
+        public void onClick(ClickEvent event) {
+            login();
+        }
 
-	public void onKeyUp(KeyUpEvent event) {
-	    if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-		login();
-	    }
-	}
+        @Override
+        public void onKeyUp(KeyUpEvent event) {
+            if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+                login();
+            }
+        }
 
-	public void onKeyPress(KeyPressEvent event) {
-	    if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER)
-		login();
-	}
+        @Override
+        public void onKeyPress(KeyPressEvent event) {
+            if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+                login();
+            }
+        }
 
-	/**
-	 * Send the login request to the server and wait for a response.
-	 */
-	@SuppressWarnings("deprecation")
-	public void login() {
-	    GWT.log("Login handler login() called");
+        /**
+         * Send the login request to the server and wait for a response.
+         */
+        @SuppressWarnings("deprecation")
+        public void login() {
+            GWT.log("Login handler login() called");
 
-	    // Load the cookies, but this time memorize (provided checkbox is
-	    // marked)
-	    loadCookies(true);
+            // Load the cookies, but this time memorize (provided checkbox is
+            // marked)
+            loadCookies(true);
 
-	    errorLabel.setText("");
-	    user.setServer(serverBox.getValue());
-	    user.setUserName(userNameBox.getValue());
-	    user.setPassword(passwordBox.getValue());
+            errorLabel.setText("");
+            user.setServer(serverBox.getValue());
+            user.setUserName(userNameBox.getValue());
+            user.setPassword(passwordBox.getValue());
 
-	    loginButton.setEnabled(false);
+            loginButton.setEnabled(false);
 
-	    DOM.setStyleAttribute(RootPanel.getBodyElement(), "cursor", "wait");
+            DOM.setStyleAttribute(RootPanel.getBodyElement(), "cursor", "wait");
 
-	    // The client-provided service actually makes the RPC call, but we
-	    // get the callback
-	    loginService.loginUser(user, new LoginCompleteCallback());
+            // The client-provided service actually makes the RPC call, but we
+            // get the callback
+            loginService.loginUser(user, new LoginCompleteCallback());
 
-	    DOM.setStyleAttribute(RootPanel.getBodyElement(), "cursor",
-		    "default");
-	}
+            DOM.setStyleAttribute(RootPanel.getBodyElement(), "cursor",
+                    "default");
+        }
     }
 
     /**
      * Called when the login() RPC call is complete.
-     * 
+     *
      * @author sbillings
      *
      */
     private class LoginCompleteCallback implements
-	    AsyncCallback<AuthenticationUser> {
+            AsyncCallback<AuthenticationUser> {
 
-	public void onFailure(Throwable caught) {
-	    GWT.log("Login screen: loginUser onFailure called");
-	    // Show the RPC error message to the user
-	    errorLabel.setVisible(true);
-	    errorLabel.setText(SERVER_ERROR + caught.getMessage());
-	    loginButton.setEnabled(true);
-	    GWT.log("Error logging in: " + caught.getMessage());
-	}
+        @Override
+        public void onFailure(Throwable caught) {
+            GWT.log("Login screen: loginUser onFailure called");
+            // Show the RPC error message to the user
+            errorLabel.setVisible(true);
+            errorLabel.setText(SERVER_ERROR + caught.getMessage());
+            loginButton.setEnabled(true);
+            GWT.log("Error logging in: " + caught.getMessage());
+        }
 
-	public void onSuccess(AuthenticationUser user) {
-	    errorLabel.setText("");
-	    errorLabel.setVisible(false);
-	    GWT.log("Login screen: loginUser onSuccess called");
-	    if (user.isAuthenticated()) {
-		RootPanel.get(browserElementId).clear();
-		// Call the user-provided handler; let 'em know login succeeded
-		loginHandler.onSuccess(user);
+        @Override
+        public void onSuccess(AuthenticationUser user) {
+            errorLabel.setText("");
+            errorLabel.setVisible(false);
+            GWT.log("Login screen: loginUser onSuccess called");
+            if (user.isAuthenticated()) {
+                RootPanel.get(browserElementId).clear();
+                // Call the user-provided handler; let 'em know login succeeded
+                loginHandler.onSuccess(user);
 
-	    } else {
-		GWT.log("Authentication failure: " + user.getErrorMessage());
-		errorLabel.setVisible(true);
-		errorLabel.setText("Authentication failure: "
-			+ user.getErrorMessage());
-		loginButton.setEnabled(true);
-	    }
-	}
+            } else {
+                GWT.log("Authentication failure: " + user.getErrorMessage());
+                errorLabel.setVisible(true);
+                errorLabel.setText("Authentication failure: "
+                        + user.getErrorMessage());
+                loginButton.setEnabled(true);
+            }
+        }
     }
 
     /**
@@ -522,9 +529,9 @@ public class StandardLoginScreen {
      *            the memorize
      */
     private void loadCookies(boolean memorize) {
-	loadFieldFromCookie(this.serverBox, serverCookie, memorize);
-	loadFieldFromCookie(this.userNameBox, userCookie, memorize);
-	loadFieldFromCookie(this.passwordBox, passwordCookie, memorize);
+        loadFieldFromCookie(serverBox, serverCookie, memorize);
+        loadFieldFromCookie(userNameBox, userCookie, memorize);
+        loadFieldFromCookie(passwordBox, passwordCookie, memorize);
     }
 
     /**
@@ -538,14 +545,14 @@ public class StandardLoginScreen {
      *            the memorize
      */
     private void loadFieldFromCookie(TextBox field, String cookieName,
-	    boolean memorize) {
-	String cookieValue = Cookies.getCookie(cookieName);
-	if (memorize) {
-	    if (rememberMeCheckBox.isEnabled()) {
-		Cookies.setCookie(cookieName, field.getValue());
-	    }
-	} else if (cookieValue != null) {
-	    field.setValue(cookieValue);
-	}
+            boolean memorize) {
+        String cookieValue = Cookies.getCookie(cookieName);
+        if (memorize) {
+            if (rememberMeCheckBox.isEnabled()) {
+                Cookies.setCookie(cookieName, field.getValue());
+            }
+        } else if (cookieValue != null) {
+            field.setValue(cookieValue);
+        }
     }
 }
