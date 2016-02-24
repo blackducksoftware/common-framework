@@ -1,19 +1,19 @@
 /*******************************************************************************
  * Copyright (C) 2016 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License version 2 only
  * as published by the Free Software Foundation.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License version 2
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *******************************************************************************/
 
 package com.blackducksoftware.tools.commonframework.core.config;
@@ -58,15 +58,17 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      */
     private ServerConfigurationParser serverConfigParser;
 
-    private APPLICATION applicationType;
-
-    private ServerBean serverBean;
+    private ProxyBean proxyBean;
 
     private SSOBean ssoBean;
 
     private String serverListLocation;
 
+    // List of all the possible connections
     private List<ServerBean> serverList = new ArrayList<ServerBean>();
+
+    // Map of connections, used in the event where multipl connections are specified in one config file.
+    private Map<APPLICATION, ServerBean> serverMap = new HashMap<APPLICATION, ServerBean>();
 
     private EmailBean emailConfiguration;
 
@@ -78,18 +80,6 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     private CommonUser user;
 
-    /** The proxy server. */
-    private String proxyServer;
-
-    /** The proxy port. */
-    private String proxyPort;
-
-    /** The proxy server https. */
-    protected String proxyServerHttps;
-
-    /** The proxy port https. */
-    protected String proxyPortHttps;
-
     /** The sdk time out. */
     private Long sdkTimeOut;
 
@@ -99,7 +89,6 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     private Long childElementCount;
 
     // Template mappings
-    /** The mappings. */
     private Map<String, String> mappings = new HashMap<String, String>();
 
     /** The props. */
@@ -133,16 +122,29 @@ public abstract class ConfigurationManager extends ConfigConstants implements
 
     /**
      * Extensible to provide custom properties. Use {@link} {@link #getProperty(String)} method.
+     * Deprecated: Application Type no longer needed
      * 
      * @param configFileLocation
      *            the config file location
      * @param applicationType
      *            the application type {@link ConfigConstants.APPLICATION}
+     * 
      */
+    @Deprecated
     protected ConfigurationManager(String configFileLocation,
             APPLICATION applicationName) {
         this.configFileLocation = configFileLocation;
-        applicationType = applicationName;
+        loadPropertiesFromFile(configFileLocation);
+        init();
+    }
+
+    /**
+     * Extensible to provide custom properties. Use {@link} {@link #getProperty(String)} method.
+     * 
+     * @param configFileLocation
+     */
+    protected ConfigurationManager(String configFileLocation) {
+        this.configFileLocation = configFileLocation;
         loadPropertiesFromFile(configFileLocation);
         init();
     }
@@ -156,7 +158,6 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      *            the application type {@link ConfigConstants.APPLICATION}
      */
     protected ConfigurationManager(Properties props, APPLICATION applicationName) {
-        applicationType = applicationName;
         this.props = new EProperties(); // start clean just in case
         this.props.addAll(props);
         init();
@@ -172,7 +173,6 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      *            the application type {@link ConfigConstants.APPLICATION}
      */
     protected ConfigurationManager(InputStream is, APPLICATION applicationName) {
-        applicationType = applicationName;
         loadPropertiesFromStream(is);
         init();
     }
@@ -185,7 +185,6 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      * @param applicationName
      */
     protected ConfigurationManager(CommonUser user, APPLICATION applicationName) {
-        applicationType = applicationName;
         this.user = user;
         init();
     }
@@ -224,16 +223,71 @@ public abstract class ConfigurationManager extends ConfigConstants implements
      * Initializes all the properties depending on APPLICATION name
      */
     private void init() {
-        String suppliedAppNamePropertyName = "";
-        if (applicationType == APPLICATION.CODECENTER) {
-            suppliedAppNamePropertyName = ConfigConstants.CODE_CENTER_PREFIX_PROPERTY;
-        } else if (applicationType == APPLICATION.PROTEX) {
-            suppliedAppNamePropertyName = ConfigConstants.PROTEX_PREFIX_PROPERTY;
+        initCommonProperties();
+        boolean processedList = processServerListConfiguration();
+
+        // For all possible conection types check to see if we can find something
+
+        for (APPLICATION appType : APPLICATION.values())
+        {
+            ServerBean bean = processServerBeanConfiguration(appType, processedList);
+            if (bean != null) {
+                serverMap.put(appType, bean);
+            }
         }
 
-        initCommonProperties();
-        processServerConfigurationInformation();
-        loadAppSpecificProperties(suppliedAppNamePropertyName);
+        if (serverMap.keySet().size() == 0)
+        {
+            throw new RuntimeException("No Suitable connections found");
+            // loadAppSpecificProperties(suppliedAppNamePropertyName);
+        }
+
+    }
+
+    /**
+     * Creates a server bean (or multiple) and populates the server bean map.
+     * If the user specified a known application type (cc, protex, hub, etc) then we
+     * add it to the map.
+     * If no suitable connections found, throw a fatal.
+     * 
+     * @param appType
+     * @param processedList
+     */
+    private ServerBean processServerBeanConfiguration(APPLICATION appType, boolean processedList) {
+        ServerBean sb = null;
+
+        // If there is a processed list, then attempt to search by application type
+        if (processedList)
+        {
+            List<ServerBean> filteredList = getServerListByApplication(appType);
+            if (filteredList.size() == 0) {
+                log.warn("Server list processed, but no configuration for application type: " + appType);
+            }
+            else
+            {
+                sb = filteredList.get(0);
+                return sb;
+            }
+        }
+
+        if (user != null) {
+            // Check if user object exists
+            sb = new ServerBean(user.getServer(), user.getUserName(),
+                    user.getPassword(), appType);
+        } else {
+            // If not, then populate the serverbean
+            sb = createAppSpecificServerBean(appType);
+        }
+
+        if (sb == null) {
+            log.warn("No configuration information for: " + appType);
+        }
+        else
+        {
+            log.info("Server configuration available for: " + appType);
+        }
+
+        return sb;
 
     }
 
@@ -275,10 +329,11 @@ public abstract class ConfigurationManager extends ConfigConstants implements
                 Integer.class));
 
         // This could go into a separate ProxyObject
-        setProxyServer(getOptionalProperty(PROXY_SERVER));
-        setProxyPort(getOptionalProperty(PROXY_PORT));
-        proxyServerHttps = getOptionalProperty(PROXY_HTTPS_SERVER);
-        proxyPortHttps = getOptionalProperty(PROXY_HTTPS_PORT);
+        proxyBean = new ProxyBean();
+        proxyBean.setProxyServer(getOptionalProperty(PROXY_SERVER));
+        proxyBean.setProxyPort(getOptionalProperty(PROXY_PORT));
+        proxyBean.setProxyServerHttps(getOptionalProperty(PROXY_HTTPS_SERVER));
+        proxyBean.setProxyPortHttps(getOptionalProperty(PROXY_HTTPS_PORT));
 
         // Optional SSO related Information
         ssoBean = new SSOBean();
@@ -290,67 +345,51 @@ public abstract class ConfigurationManager extends ConfigConstants implements
         ssoBean.setTrustStorePassword(getOptionalProperty(SSOBean.SSO_TRUST_STORE_PASSWORD));
         ssoBean.setTrustStoreType(getOptionalProperty(SSOBean.SSO_TRUST_STORE_TYPE));
 
-    }
-
-    private void loadAppSpecificProperties(String suppliedAppNamePropertyName)
-            throws IllegalArgumentException {
-
-        // Optional Time Out
-        String sdkTimeOutStr = getOptionalProperty(suppliedAppNamePropertyName
-                + "." + SDK_TIMEOUT_SUFFIX);
-        if (sdkTimeOutStr != null) {
-            setSdkTimeOut(Long.parseLong(sdkTimeOutStr));
-        }
-
         // Optional child element overrwrite
-        Integer childCount = getOptionalProperty(suppliedAppNamePropertyName
-                + "." + SDK_CHILD_COUNT, 50000, Integer.class);
+        Integer childCount = getOptionalProperty(SDK_CHILD_COUNT, 50000, Integer.class);
         log.debug("Setting CXF timeout: " + childCount);
         setChildElementCount(new Long(childCount));
-
-        // If a user specified a list, then there is no reason to proceed
-        // further.
-        if (serverList.size() > 0) {
-            // We wil set the internal bean of the first element as a fail-safe
-            List<ServerBean> filteredList = getServerListByApplication(applicationType);
-            if (filteredList.size() == 0) {
-                throw new IllegalArgumentException(
-                        "Found no server configuration for type ["
-                                + applicationType
-                                + "] please check your server configuration file!");
-            }
-            setServerBean(filteredList.get(0));
-        } else if (user != null) {
-            // Check if user object exists
-            serverBean = new ServerBean(user.getServer(), user.getUserName(),
-                    user.getPassword(), applicationType);
-        } else {
-            // If not, then populate the serverbean
-            createAppSpecificServerBean(suppliedAppNamePropertyName);
-        }
-
     }
 
     /**
      * Based on specified application name we will extract the necessary
      * properties
      */
-    private void createAppSpecificServerBean(String suppliedAppNamePropertyName) {
-        String userName = getProperty(suppliedAppNamePropertyName + "."
-                + GENERIC_USER_NAME_PROPERTY_SUFFIX);
-        String server = getProperty(suppliedAppNamePropertyName + "."
-                + GENERIC_SERVER_NAME_PROPERTY_SUFFIX);
+    private ServerBean createAppSpecificServerBean(APPLICATION suppliedApplication)
+    {
+        String propertyPrefix;
+        String userName;
+        String server;
+        // We want to perform a small translation here. Most users 'cc' as a prefix, so we map it here.
+        if (suppliedApplication == APPLICATION.CODECENTER) {
+            propertyPrefix = "cc";
+        } else {
+            propertyPrefix = suppliedApplication.toString().toLowerCase();
+        }
+
+        try {
+            userName = getProperty(propertyPrefix + "."
+                    + GENERIC_USER_NAME_PROPERTY_SUFFIX);
+            server = getProperty(propertyPrefix + "."
+                    + GENERIC_SERVER_NAME_PROPERTY_SUFFIX);
+        } catch (Exception e)
+        {
+            log.info("No connection information available for: " + suppliedApplication);
+            return null;
+        }
 
         // The messy work of interpreting the possibly-plain-text,
         // possibly-encrypted, possibly-base64-encoded password
         // is delegated to ConfigurationPassword
         ConfigurationPassword configurationPassword = ConfigurationPassword
-                .createFromProperty(getProps(), suppliedAppNamePropertyName);
+                .createFromProperty(getProps(), propertyPrefix);
 
-        serverBean = new ServerBean(server, userName,
-                configurationPassword.getPlainText(), applicationType);
+        ServerBean serverBean = new ServerBean(server, userName,
+                configurationPassword.getPlainText(), suppliedApplication);
 
         log.debug("Configured custom server bean: " + serverBean);
+
+        return serverBean;
     }
 
     /**
@@ -371,15 +410,15 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     }
 
     /**
-     * Process server configuration information.
+     * If the user provides a server list, process it here.
      * 
      * @return the list
      */
-    protected void processServerConfigurationInformation() {
+    protected boolean processServerListConfiguration() {
         String serverListLocationStr = getServerListLocation();
         if (serverListLocationStr == null) {
             log.warn("Server List location property exists, but empty");
-            return;
+            return false;
         }
 
         try {
@@ -404,6 +443,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
                 try {
                     serverList = serverConfigParser
                             .processServerConfiguration();
+                    return true;
                 } catch (Exception e) {
                     log.error("Unable to parse server file", e);
                     throw new IllegalArgumentException(
@@ -587,90 +627,6 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     }
 
     /**
-     * Gets the proxy server.
-     * 
-     * @return the proxy server
-     */
-    @Override
-    public String getProxyServer() {
-        return proxyServer;
-    }
-
-    /**
-     * Sets the proxy server.
-     * 
-     * @param proxyServer
-     *            the new proxy server
-     */
-    @Override
-    public void setProxyServer(String proxyServer) {
-        this.proxyServer = proxyServer;
-    }
-
-    /**
-     * Gets the proxy port.
-     * 
-     * @return the proxy port
-     */
-    @Override
-    public String getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * Sets the proxy port.
-     * 
-     * @param proxyPort
-     *            the new proxy port
-     */
-    @Override
-    public void setProxyPort(String proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    /**
-     * Gets the proxy server https.
-     * 
-     * @return the proxy server https
-     */
-    @Override
-    public String getProxyServerHttps() {
-        return proxyServerHttps;
-    }
-
-    /**
-     * Sets the proxy server https.
-     * 
-     * @param proxyServerHttps
-     *            the new proxy server https
-     */
-    @Override
-    public void setProxyServerHttps(String proxyServerHttps) {
-        this.proxyServerHttps = proxyServerHttps;
-    }
-
-    /**
-     * Gets the proxy port https.
-     * 
-     * @return the proxy port https
-     */
-    @Override
-    public String getProxyPortHttps() {
-        return proxyPortHttps;
-    }
-
-    /**
-     * Sets the proxy port https.
-     * 
-     * @param proxyPortHttps
-     *            the new proxy port https
-     */
-    @Override
-    public void setProxyPortHttps(String proxyPortHttps) {
-        this.proxyPortHttps = proxyPortHttps;
-    }
-
-    /**
      * Gets the sdk time out.
      * 
      * @return the sdk time out
@@ -770,35 +726,16 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     }
 
     @Override
-    public APPLICATION getApplicationType() {
-        return applicationType;
-    }
-
-    @Override
-    public void setApplicationType(APPLICATION applicationName) {
-        applicationType = applicationName;
+    public ServerBean getServerBean(APPLICATION app)
+    {
+        return serverMap.get(app);
     }
 
     /**
-     * Returns this ConfigurationManager's server bean. This may either be the
-     * explicitly configured application_name.property_name settings <br>
-     * or the first element the server.list configuration.
+     * Deprecated, use serverSerbean(bean, APPLICATION)
      * 
-     * @return
+     * @param serverBean
      */
-    @Override
-    public ServerBean getServerBean() {
-        if (serverBean != null) {
-            return serverBean;
-        } else {
-            serverBean = serverList.get(0);
-            return serverBean;
-        }
-    }
-
-    private void setServerBean(ServerBean serverBean) {
-        this.serverBean = serverBean;
-    }
 
     @Override
     public List<ServerBean> getServerList() {
@@ -848,6 +785,13 @@ public abstract class ConfigurationManager extends ConfigConstants implements
     // SSO
     public SSOBean getSsoBean() {
         return ssoBean;
+    }
+
+    // Proxy
+
+    public ProxyBean getProxyBean()
+    {
+        return proxyBean;
     }
 
 }

@@ -1,19 +1,19 @@
 /*******************************************************************************
  * Copyright (C) 2016 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License version 2 only
  * as published by the Free Software Foundation.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License version 2
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *******************************************************************************/
 package com.blackducksoftware.tools.commonframework.core.config;
 
@@ -27,7 +27,7 @@ public class ConfigConstants {
 
     /**
      * The type of Black Duck Application that you want to configure for. <br>
-     * CODECENTER - Black Duck Code Center <br>
+     * CC - Black Duck Code Center <br>
      * PROTEX - Black Duck Code Center <br>
      * HUB - the Hub, not yet released <br>
      * GENERIC - Not a specific Black Duck App
@@ -128,8 +128,6 @@ public class ConfigConstants {
     protected final static String PROXY_HTTPS_PORT = "proxy.https.port";
 
     // SDK OPTIONS
-    protected final static String SDK_TIMEOUT_SUFFIX = "sdk.timeout";
-
     protected final static String SDK_CHILD_COUNT = "sdk.cxf.children";
 
     // Protex Project Data

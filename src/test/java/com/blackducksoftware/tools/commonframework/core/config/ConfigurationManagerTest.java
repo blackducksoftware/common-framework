@@ -44,11 +44,11 @@ import com.blackducksoftware.tools.commonframework.standard.email.EmailTriggerRu
  */
 public class ConfigurationManagerTest {
 
-    /** The Protex config manager. */
-    private static ConfigurationManager protexCM = null;
+    private APPLICATION protex = APPLICATION.PROTEX;
 
-    /** The Code Center config manager. */
-    private static ConfigurationManager ccCM = null;
+    private APPLICATION cc = APPLICATION.CODECENTER;
+
+    private static ConfigurationManager configurationManager = null;
 
     /* Basic config files */
     public static String testFile = "test_config.properties";
@@ -91,10 +91,7 @@ public class ConfigurationManagerTest {
     static public void setUpBeforeClass() {
         String fullLocation = ClassLoader.getSystemResource(testFile).getFile();
 
-        protexCM = new TestConfigurationManagerBean(fullLocation,
-                APPLICATION.PROTEX);
-        ccCM = new TestConfigurationManagerBean(fullLocation,
-                APPLICATION.CODECENTER);
+        configurationManager = new TestConfigurationManagerBean(fullLocation);
     }
 
     /**
@@ -106,14 +103,11 @@ public class ConfigurationManagerTest {
         String fullLocationFileWithList = ClassLoader.getSystemResource(
                 testFileWithServerList).getFile();
 
-        ConfigurationManager protexCM = new TestConfigurationManagerBean(
-                fullLocationFileWithList, APPLICATION.PROTEX);
+        ConfigurationManager cm = new TestConfigurationManagerBean(
+                fullLocationFileWithList);
 
-        ConfigurationManager ccCM = new TestConfigurationManagerBean(
-                fullLocationFileWithList, APPLICATION.CODECENTER);
-
-        ServerBean protexServerBean = protexCM.getServerBean();
-        ServerBean ccServerBean = ccCM.getServerBean();
+        ServerBean protexServerBean = cm.getServerBean(protex);
+        ServerBean ccServerBean = cm.getServerBean(cc);
 
         Assert.assertEquals("bla_protex", protexServerBean.getServerName());
         Assert.assertEquals("bla_codecenter", ccServerBean.getServerName());
@@ -126,9 +120,9 @@ public class ConfigurationManagerTest {
                 testFileWithOnlyServerList).getFile();
 
         ConfigurationManager protexCM = new TestConfigurationManagerBean(
-                fullLocationFileWithList, APPLICATION.PROTEX);
+                fullLocationFileWithList);
 
-        ServerBean protexServerBean = protexCM.getServerBean();
+        ServerBean protexServerBean = protexCM.getServerBean(protex);
         Assert.assertEquals("bla_protex", protexServerBean.getServerName());
 
     }
@@ -141,11 +135,11 @@ public class ConfigurationManagerTest {
     public void testInitializerWithGoodFileAndGoodParams() {
         try {
             // Protex
-            String server = protexCM
+            String server = configurationManager
                     .getProperty(ConfigConstants.PROTEX_SERVER_NAME_PROPERTY);
-            String user = protexCM
+            String user = configurationManager
                     .getProperty(ConfigConstants.PROTEX_USER_NAME_PROPERTY);
-            String password = protexCM
+            String password = configurationManager
                     .getProperty(ConfigConstants.PROTEX_PASSWORD_PROPERTY);
 
             Assert.assertEquals("myserver", server);
@@ -153,9 +147,9 @@ public class ConfigurationManagerTest {
             Assert.assertEquals("blackDuck", password);
 
             // CC
-            server = ccCM.getProperty(ConfigConstants.CC_SERVER_NAME_PROPERTY);
-            user = ccCM.getProperty(ConfigConstants.CC_USER_NAME_PROPERTY);
-            password = ccCM.getProperty(ConfigConstants.CC_PASSWORD_PROPERTY);
+            server = configurationManager.getProperty(ConfigConstants.CC_SERVER_NAME_PROPERTY);
+            user = configurationManager.getProperty(ConfigConstants.CC_USER_NAME_PROPERTY);
+            password = configurationManager.getProperty(ConfigConstants.CC_PASSWORD_PROPERTY);
 
             Assert.assertEquals("cc_server", server);
             Assert.assertEquals("cc_user", user);
@@ -171,7 +165,7 @@ public class ConfigurationManagerTest {
      */
     @Test
     public void testMappings() {
-        Map<String, String> mappings = protexCM.getMappings();
+        Map<String, String> mappings = configurationManager.getMappings();
         int size = mappings.size();
 
         Assert.assertEquals(5, size);
@@ -216,7 +210,7 @@ public class ConfigurationManagerTest {
         String bogusKey = "BOGUS KEY";
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Property key DNE: " + bogusKey);
-        protexCM.getProperty(bogusKey);
+        configurationManager.getProperty(bogusKey);
     }
 
     /**
@@ -227,7 +221,7 @@ public class ConfigurationManagerTest {
         String emptyKey = "empty.key";
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Value DNE for key: " + emptyKey);
-        protexCM.getProperty(emptyKey);
+        configurationManager.getProperty(emptyKey);
     }
 
     /**
@@ -236,11 +230,11 @@ public class ConfigurationManagerTest {
     @Test
     public void testInitializerWithOptionalKeys() {
         String emptyKey = "empty.key";
-        String emptyValue = protexCM.getOptionalProperty(emptyKey);
+        String emptyValue = configurationManager.getOptionalProperty(emptyKey);
         Assert.assertEquals("", emptyValue);
 
         String bogusKey = "bogus.key";
-        String nullValue = protexCM.getOptionalProperty(bogusKey);
+        String nullValue = configurationManager.getOptionalProperty(bogusKey);
         Assert.assertNull(nullValue);
     }
 
@@ -261,13 +255,15 @@ public class ConfigurationManagerTest {
      */
     @Test
     public void testGettersForCommonRequiredProps() {
-        String protexServerName = protexCM.getServerBean().getServerName();
-        String protexUser = protexCM.getServerBean().getUserName();
-        String protexPass = protexCM.getServerBean().getPassword();
+        ServerBean protexBean = configurationManager.getServerBean(protex);
+        String protexServerName = protexBean.getServerName();
+        String protexUser = protexBean.getUserName();
+        String protexPass = protexBean.getPassword();
 
-        String ccServerName = ccCM.getServerBean().getServerName();
-        String ccUser = ccCM.getServerBean().getUserName();
-        String ccPass = ccCM.getServerBean().getPassword();
+        ServerBean ccBean = configurationManager.getServerBean(cc);
+        String ccServerName = ccBean.getServerName();
+        String ccUser = ccBean.getUserName();
+        String ccPass = ccBean.getPassword();
 
         Assert.assertEquals("myserver", protexServerName);
         Assert.assertEquals("userName", protexUser);
@@ -292,7 +288,7 @@ public class ConfigurationManagerTest {
                 "src/test/resources/email/email_test_config.properties"),
                 workingConfigFile);
         ConfigurationManager emailCM = new TestConfigurationManagerBean(
-                workingConfigFile.getAbsolutePath(), APPLICATION.PROTEX);
+                workingConfigFile.getAbsolutePath());
 
         Assert.assertEquals("email_auth_password", emailCM
                 .getEmailConfiguration().getAuthPassword());
@@ -303,15 +299,15 @@ public class ConfigurationManagerTest {
      */
     @Test
     public void testEmailPropertiesEasy() {
-        Assert.assertEquals("email_smtp_address", protexCM
+        Assert.assertEquals("email_smtp_address", configurationManager
                 .getEmailConfiguration().getSmtpAddress());
-        Assert.assertEquals("email_auth_password", protexCM
+        Assert.assertEquals("email_auth_password", configurationManager
                 .getEmailConfiguration().getAuthPassword());
     }
 
     @Test
     public void testEmailRules() {
-        List<EmailTriggerRule> emailRules = protexCM
+        List<EmailTriggerRule> emailRules = configurationManager
                 .getNotificationRulesConfiguration().getRules();
 
         Assert.assertEquals(2, emailRules.size());
@@ -327,16 +323,17 @@ public class ConfigurationManagerTest {
      */
     @Test
     public void testGettersForCommonOptionalProps() {
-        String proxyPort = protexCM.getProxyPort();
+        ProxyBean proxy = configurationManager.getProxyBean();
+        String proxyPort = proxy.getProxyPort();
         Assert.assertEquals("80", proxyPort);
 
-        String proxyServer = protexCM.getProxyServer();
+        String proxyServer = proxy.getProxyServer();
         Assert.assertEquals("proxy.server", proxyServer);
 
-        String proxyServerHtpps = protexCM.getProxyServerHttps();
+        String proxyServerHtpps = proxy.getProxyServerHttps();
         Assert.assertEquals("proxy.https.server", proxyServerHtpps);
 
-        String proxyPortHttps = protexCM.getProxyPortHttps();
+        String proxyPortHttps = proxy.getProxyPortHttps();
         Assert.assertEquals("8080", proxyPortHttps);
     }
 
@@ -353,7 +350,7 @@ public class ConfigurationManagerTest {
         }
 
         ConfigurationManager sslCM = new TestConfigurationManagerBean(
-                resourcePath.toFile().getAbsolutePath(), APPLICATION.PROTEX);
+                resourcePath.toFile().getAbsolutePath());
 
         SSOBean ssoBean = sslCM.getSsoBean();
 
