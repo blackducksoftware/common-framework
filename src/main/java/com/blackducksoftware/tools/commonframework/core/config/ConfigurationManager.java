@@ -280,11 +280,11 @@ public abstract class ConfigurationManager extends ConfigConstants implements
         }
 
         if (sb == null) {
-            log.warn("No configuration information for: " + appType);
+            log.debug("No configuration information for: " + appType);
         }
         else
         {
-            log.info("Server configuration available for: " + appType);
+            log.debug("Server configuration available for: " + appType);
         }
 
         return sb;
@@ -528,7 +528,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements
         }
 
         if (value == null) {
-            log.info("[Optional] property: " + propertyKey
+            log.debug("[Optional] property: " + propertyKey
                     + ", is missing or blank");
         }
         return value;
