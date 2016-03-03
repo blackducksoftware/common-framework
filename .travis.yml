@@ -4,4 +4,4 @@ notifications:
     recipients:
       - akamen@blackducksoftware.com
       - sbillings@blackducksoftware.com
-    on_failure: [always|never|change] # default: always
+    
