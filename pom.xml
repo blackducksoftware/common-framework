@@ -337,6 +337,10 @@
 		</repository>
 	</repositories>
 
+
+	<!-- Black Duck Internal Only (change this if you need to deploy to a local 
+		repo -->
+		
 	<distributionManagement>
 		<repository>
 			<id>artifactory.blackducksoftware.com</id>
@@ -344,8 +348,9 @@
 			<url>http://artifactory.blackducksoftware.com:8081/artifactory/soleng</url>
 		</repository>
 		<snapshotRepository>
-			<id>jfrog-snapshots</id>
-			<url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+			<id>artifactory.blackducksoftware.com</id>
+			<name>artifactory.blackducksoftware.com-snapshots</name>
+			<url>http://artifactory.blackducksoftware.com:8081/artifactory/soleng</url>
 		</snapshotRepository>
 
 	</distributionManagement>
