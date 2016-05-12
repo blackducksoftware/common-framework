@@ -21,7 +21,6 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<!-- Build system complaining about UTF 8 -->
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-
 	</properties>
 
 	<dependencies>
@@ -36,7 +35,6 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -48,7 +46,6 @@
 			<version>1.7.7</version>
 			<scope>test</scope>
 		</dependency>
-
 		<!-- Config Parsing -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -65,13 +62,11 @@
 			<artifactId>gson</artifactId>
 			<version>1.7.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.jmatrix</groupId>
 			<artifactId>eproperties</artifactId>
 			<version>1.1.0-r56m</version>
 		</dependency>
-
 		<!-- HTML Processing -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -105,7 +100,6 @@
 			<artifactId>tika-core</artifactId>
 			<version>1.7</version>
 		</dependency>
-
 		<!-- GWT -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -133,7 +127,6 @@
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity-tools</artifactId>
 			<version>2.0</version>
-
 			<exclusions>
 				<!-- Swap out struts 1.3.8 for 1.3.9 to avoid CVE-2014-0114 -->
 				<exclusion>
@@ -178,21 +171,17 @@
 			<version>3.2.2</version>
 		</dependency>
 
-
 		<!-- Base 64 -->
 		<dependency>
 			<groupId>xml-security</groupId>
 			<artifactId>xmlsec</artifactId>
 			<version>1.3.0</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901-1.jdbc4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
@@ -222,10 +211,33 @@
 					<includes>
 						<include>**/*Test.class</include>
 					</includes>
-
 				</configuration>
 			</plugin>
-
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.6.201602180812</version>
+                    <executions>
+                        <execution>
+                            <id>default-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>4.1.0</version>
+                </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -319,8 +331,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-
-
 	</build>
 
 	<repositories>
@@ -337,7 +347,6 @@
 		</repository>
 	</repositories>
 
-
 	<!-- Black Duck Internal Only (change this if you need to deploy to a local 
 		repo -->
 		
@@ -352,6 +361,6 @@
 			<name>artifactory.blackducksoftware.com-snapshots</name>
 			<url>http://artifactory.blackducksoftware.com:8081/artifactory/soleng</url>
 		</snapshotRepository>
-
 	</distributionManagement>
+
 </project>

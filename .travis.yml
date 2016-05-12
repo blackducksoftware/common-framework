@@ -4,4 +4,9 @@ notifications:
     recipients:
       - akamen@blackducksoftware.com
       - sbillings@blackducksoftware.com
-    
+
+install: true
+script:
+  - mvn package
+after_success:
+  - mvn test jacoco:report coveralls:report
