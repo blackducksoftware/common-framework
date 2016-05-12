@@ -331,9 +331,9 @@
 
 	<repositories>
 		<repository>
-			<id>maven-us.nuxeo</id>
-			<name>Maven US Nexeo</name>
-			<url>https://maven-us.nuxeo.org/nexus/content/repositories/thirdparty-releases</url>
+			<id>bds-int-public</id>
+			<name>Integration Public</name>
+			<url>https://updates.suite.blackducksoftware.com/bdhubjenkins</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -347,14 +347,12 @@
 		repo -->
 	<distributionManagement>
 		<repository>
-			<id>artifactory.blackducksoftware.com</id>
-			<name>artifactory.blackducksoftware.com-releases</name>
-			<url>http://artifactory.blackducksoftware.com:8081/artifactory/soleng</url>
+			<id>bds-int-public</id>
+			<url>https://updates.suite.blackducksoftware.com/bdhubjenkins</url>
 		</repository>
 		<snapshotRepository>
-			<id>artifactory.blackducksoftware.com</id>
-			<name>artifactory.blackducksoftware.com-snapshots</name>
-			<url>http://artifactory.blackducksoftware.com:8081/artifactory/soleng</url>
+			<id>bds-int-public</id>
+			<url>https://updates.suite.blackducksoftware.com/bdhubjenkins</url>
 		</snapshotRepository>
 	</distributionManagement>
 
