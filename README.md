@@ -4,6 +4,7 @@ The CommonFramework base project contains common utility classes to make stand-a
 ## Build ##
 
 [![Build Status](https://travis-ci.org/blackducksoftware/common-framework.svg?branch=master)](https://travis-ci.org/blackducksoftware/common-framework)
+[![Coverage Status](https://coveralls.io/repos/github/blackducksoftware/common-framework/badge.svg?branch=master)](https://coveralls.io/github/blackducksoftware/commons-framework?branch=master)
 
 ## Where can I get the latest release? ##
 You can download the latest source from GitHub: https://github.com/blackducksoftware/common-framework. 
@@ -16,5 +17,3 @@ Please see wiki for more information: https://github.com/blackducksoftware/commo
 
 ## License ##
 GNU General Public License v2.0 only.
-
-
