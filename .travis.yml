@@ -12,6 +12,6 @@ notifications:
 
 install: true
 script:
-  - mvn package
+  - mvn clean package
 after_success:
   - mvn test jacoco:report coveralls:report
