@@ -16,4 +16,4 @@ You can pull the binary from BinTray via Maven (we recommend using the connector
 Please see wiki for more information: https://github.com/blackducksoftware/common-framework/wiki
 
 ## License ##
-GNU General Public License v2.0 only.
+Apache License 2.0
