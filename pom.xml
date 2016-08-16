@@ -11,7 +11,7 @@
 
   <groupId>com.blackducksoftware.tools</groupId>
   <artifactId>common-framework</artifactId>
-  <version>1.6.6</version>
+  <version>1.6.7-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>CommonFramework</name>
@@ -77,11 +77,18 @@
       <artifactId>gson</artifactId>
       <version>1.7.1</version>
     </dependency>
-    <dependency>
-      <groupId>net.jmatrix</groupId>
-      <artifactId>eproperties</artifactId>
-      <version>1.1.0-r56m</version>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
+	<dependency>
+    	<groupId>org.apache.commons</groupId>
+    	<artifactId>commons-configuration2</artifactId>
+    	<version>2.0</version>
+	</dependency>
+    <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+	<dependency>
+    	<groupId>commons-beanutils</groupId>
+    	<artifactId>commons-beanutils</artifactId>
+    	<version>1.9.2</version>
+	</dependency>
     <!-- HTML Processing -->
     <dependency>
       <groupId>org.jsoup</groupId>

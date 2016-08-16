@@ -34,8 +34,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import net.jmatrix.eproperties.EProperties;
-
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +46,9 @@ import com.blackducksoftware.tools.commonframework.standard.protex.report.templa
 /**
  * Abstract ConfigManager that either: <li>Loads basic properties used for most
  * projects. or <li>Accepts a user object with the necessary populated fields
- * 
+ *
  * @author Ari Kamen
- * 
+ *
  */
 public abstract class ConfigurationManager extends ConfigConstants implements IConfigurationManager {
 	/** The log. */
@@ -72,7 +70,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	// Map of connections, used in the event where multipl connections are
 	// specified in one config file.
-	private Map<APPLICATION, ServerBean> serverMap = new HashMap<APPLICATION, ServerBean>();
+	private final Map<APPLICATION, ServerBean> serverMap = new HashMap<APPLICATION, ServerBean>();
 
 	private EmailBean emailConfiguration;
 
@@ -93,7 +91,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	private Long childElementCount;
 
 	// Template mappings
-	private Map<String, String> mappings = new HashMap<String, String>();
+	private final Map<String, String> mappings = new HashMap<String, String>();
 
 	/** The props. */
 	private EProperties props = new EProperties();
@@ -128,12 +126,12 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 * Extensible to provide custom properties. Use {@link}
 	 * {@link #getProperty(String)} method. Deprecated: Application Type no
 	 * longer needed
-	 * 
+	 *
 	 * @param configFileLocation
 	 *            the config file location
 	 * @param applicationType
 	 *            the application type {@link ConfigConstants.APPLICATION}
-	 * 
+	 *
 	 */
 	@Deprecated
 	protected ConfigurationManager(final String configFileLocation, final APPLICATION applicationName) {
@@ -145,7 +143,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Extensible to provide custom properties. Use {@link}
 	 * {@link #getProperty(String)} method.
-	 * 
+	 *
 	 * @param configFileLocation
 	 */
 	protected ConfigurationManager(final String configFileLocation) {
@@ -156,7 +154,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Instantiates a new configuration manager.
-	 * 
+	 *
 	 * @param props
 	 *            the props
 	 * @param applicationType
@@ -171,7 +169,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Initializer for stream instead of specific file Used when file's
 	 * classpath is not obvious (web context).
-	 * 
+	 *
 	 * @param is
 	 *            the is
 	 * @param applicationType
@@ -185,7 +183,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * CommonUser based instantiation Used by those applications that do not
 	 * have a property file.
-	 * 
+	 *
 	 * @param user
 	 * @param applicationName
 	 */
@@ -196,7 +194,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Load properties from file.
-	 * 
+	 *
 	 * @param configFileLocation
 	 *            the config file location
 	 * @throws IOException
@@ -204,23 +202,25 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 */
 	private void loadPropertiesFromFile(final String configFileLocation) {
 		configFile = new ConfigurationFile(configFileLocation);
-		configFile.copyProperties(props);
+		configFile.copyProperties(props.getProperties());
 		configFile.saveWithEncryptedPasswords();
 	}
 
 	/**
 	 * Load properties from stream.
-	 * 
+	 *
 	 * @param is
 	 *            the is
 	 */
 	private void loadPropertiesFromStream(final InputStream is) {
+		final Properties tempProps = new Properties();
 		try {
-			props.load(is);
+			tempProps.load(is);
 			is.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalArgumentException("Unable to load properties from stream!");
 		}
+		props.addAll(tempProps);
 	}
 
 	/**
@@ -228,13 +228,13 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 */
 	private void init() {
 		initCommonProperties();
-		boolean processedList = processServerListConfiguration();
+		final boolean processedList = processServerListConfiguration();
 
 		// For all possible conection types check to see if we can find
 		// something
 
-		for (APPLICATION appType : APPLICATION.values()) {
-			ServerBean bean = processServerBeanConfiguration(appType, processedList);
+		for (final APPLICATION appType : APPLICATION.values()) {
+			final ServerBean bean = processServerBeanConfiguration(appType, processedList);
 			if (bean != null) {
 				serverMap.put(appType, bean);
 			}
@@ -251,7 +251,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 * Creates a server bean (or multiple) and populates the server bean map. If
 	 * the user specified a known application type (cc, protex, hub, etc) then
 	 * we add it to the map. If no suitable connections found, throw a fatal.
-	 * 
+	 *
 	 * @param appType
 	 * @param processedList
 	 */
@@ -261,7 +261,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		// If there is a processed list, then attempt to search by application
 		// type
 		if (processedList) {
-			List<ServerBean> filteredList = getServerListByApplication(appType);
+			final List<ServerBean> filteredList = getServerListByApplication(appType);
 			if (filteredList.size() == 0) {
 				log.warn("Server list processed, but no configuration for application type: " + appType);
 			} else {
@@ -290,7 +290,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Optional properties that are end point agnostic.
-	 * 
+	 *
 	 * @param suppliedAppNamePropertyName
 	 */
 	protected void initCommonProperties() {
@@ -310,7 +310,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		// The messy work of interpreting the possibly-plain-text,
 		// possibly-encrypted, possibly-base64-encoded password
 		// is delegated to ConfigurationPassword
-		ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(getProps(),
+		final ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(getProps(),
 				EMAIL_AUTH_PASSWORD_PREFIX);
 		emailConfiguration.setAuthPassword(configurationPassword.getPlainText());
 
@@ -336,7 +336,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		ssoBean.setTrustStoreType(getOptionalProperty(SSOBean.SSO_TRUST_STORE_TYPE));
 
 		// Optional child element overrwrite
-		Integer childCount = getOptionalProperty(SDK_CHILD_COUNT, 50000, Integer.class);
+		final Integer childCount = getOptionalProperty(SDK_CHILD_COUNT, 50000, Integer.class);
 		log.debug("Setting CXF timeout: " + childCount);
 		setChildElementCount(new Long(childCount));
 	}
@@ -360,7 +360,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		try {
 			userName = getProperty(propertyPrefix + "." + GENERIC_USER_NAME_PROPERTY_SUFFIX);
 			server = getProperty(propertyPrefix + "." + GENERIC_SERVER_NAME_PROPERTY_SUFFIX);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.info("No connection information available for: " + suppliedApplication);
 			return null;
 		}
@@ -368,10 +368,10 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		// The messy work of interpreting the possibly-plain-text,
 		// possibly-encrypted, possibly-base64-encoded password
 		// is delegated to ConfigurationPassword
-		ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(getProps(),
+		final ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(getProps(),
 				propertyPrefix);
 
-		ServerBean serverBean = new ServerBean(server, userName, configurationPassword.getPlainText(),
+		final ServerBean serverBean = new ServerBean(server, userName, configurationPassword.getPlainText(),
 				suppliedApplication);
 
 		log.debug("Configured custom server bean: " + serverBean);
@@ -381,7 +381,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Returns a list of ServerBeans based on Application Name only
-	 * 
+	 *
 	 * @param appName
 	 * @return
 	 * @throws Exception
@@ -396,11 +396,11 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * If the user provides a server list, process it here.
-	 * 
+	 *
 	 * @return the list
 	 */
 	protected boolean processServerListConfiguration() {
-		String serverListLocationStr = getServerListLocation();
+		final String serverListLocationStr = getServerListLocation();
 		if (serverListLocationStr == null) {
 			log.warn("Server List location property exists, but empty");
 			return false;
@@ -415,7 +415,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 						.getFile());
 			} else {
 				log.info("Loading server configuration relative to configuration file: " + configFileLocation);
-				File configFileLocationPath = new File(configFileLocation);
+				final File configFileLocationPath = new File(configFileLocation);
 				serverListLocation = new File(configFileLocationPath.getParent() + File.separator
 						+ serverListLocationStr);
 			}
@@ -425,14 +425,14 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 				try {
 					serverList = serverConfigParser.processServerConfiguration();
 					return true;
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					log.error("Unable to parse server file", e);
 					throw new IllegalArgumentException("Unable to parse server file!" + e.getMessage());
 				}
 			} else {
 				throw new IllegalArgumentException("Server list location does not exist:" + serverListLocationStr);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IllegalArgumentException("Unable to load server list file", e);
 		}
 
@@ -441,7 +441,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Returns the value for the property resource loaded by the
 	 * ConfigurationManager.
-	 * 
+	 *
 	 * @param propertyKey
 	 *            the property key
 	 * @return the property
@@ -451,7 +451,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		String value = null;
 
 		if (props.containsKey(propertyKey)) {
-			value = (String) props.get(propertyKey);
+			value = props.get(propertyKey);
 			value = value.trim();
 			if (value == null || value.length() == 0) {
 				throw new IllegalArgumentException("Value DNE for key: " + propertyKey);
@@ -468,7 +468,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Check to make sure this UNsupported (obsolete) property is not set. If it
 	 * is set, throw an IllegalArgumentException.
-	 * 
+	 *
 	 * @param propertyKey
 	 *            the property key
 	 * @return the property
@@ -483,7 +483,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Retrieves optional properties and sets them to the config.
-	 * 
+	 *
 	 * @param propertyKey
 	 *            the property key
 	 * @return the optional property
@@ -493,7 +493,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		String value = null;
 
 		if (props.containsKey(propertyKey)) {
-			value = (String) props.get(propertyKey);
+			value = props.get(propertyKey);
 			value = value.trim();
 		}
 
@@ -506,7 +506,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Retrieves optional property, if property is missing returns default
 	 * value.
-	 * 
+	 *
 	 * @param <T>
 	 * @param key
 	 * @param defaultValue
@@ -516,7 +516,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getOptionalProperty(final String propertyKey, final T defaultValue, final Class<T> theClass) {
-		T classType = theClass.cast(defaultValue);
+		final T classType = theClass.cast(defaultValue);
 		String value = null;
 		T returnValue = null;
 
@@ -549,7 +549,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 * Consumes user specified mappings from the property file. User must have
 	 * "template.mapping.x=column,value" specified for this to be populated. <br>
 	 * Used by {@link TemplateReader}
-	 * 
+	 *
 	 * @return the mappings
 	 * @throws IllegalArgumentException
 	 *             the illegal argument exception
@@ -558,16 +558,17 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	public Map<String, String> getMappings() throws IllegalArgumentException {
 
 		@SuppressWarnings("unchecked")
+		final
 		Set<Object> keys = props.keySet();
-		for (Object o : keys) {
-			String key = (String) o;
+		for (final Object o : keys) {
+			final String key = (String) o;
 			if (key.startsWith(PROPERTY_TEMPLATE_MAPPING)) {
-				String mappingPair = props.getProperty(key);
+				final String mappingPair = props.getProperty(key);
 				if (mappingPair != null) {
-					String[] keyValuePair = mappingPair.split(",");
+					final String[] keyValuePair = mappingPair.split(",");
 					if (keyValuePair.length == 2) {
-						String columnKey = keyValuePair[0].trim();
-						String mappingMethod = keyValuePair[1].trim();
+						final String columnKey = keyValuePair[0].trim();
+						final String mappingMethod = keyValuePair[1].trim();
 
 						// Check to make sure that if the Column exists, the
 						// method is the same
@@ -575,7 +576,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 						// TODO: Figure out a way to allow user to map same
 						// column names to different methods.
 						if (mappings.containsKey(columnKey)) {
-							String existingMethod = mappings.get(columnKey);
+							final String existingMethod = mappings.get(columnKey);
 							if (!mappingMethod.equals(existingMethod)) {
 								throw new IllegalArgumentException(columnKey
 										+ " is mapped more than once to non-unique methods.");
@@ -595,7 +596,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Gets the sdk time out.
-	 * 
+	 *
 	 * @return the sdk time out
 	 */
 	@Override
@@ -605,7 +606,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Sets the sdk time out.
-	 * 
+	 *
 	 * @param sdkTimeOut
 	 *            the new sdk time out
 	 */
@@ -616,7 +617,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Provides information from the server URL.
-	 * 
+	 *
 	 * @param urlInfo
 	 *            the url info
 	 * @return the string
@@ -625,7 +626,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	public String findURLInformation(final URL_INFORMATION urlInfo) {
 		String returnString = null;
 		try {
-			URIBuilder builder = new URIBuilder(serverURL);
+			final URIBuilder builder = new URIBuilder(serverURL);
 
 			if (urlInfo == URL_INFORMATION.HOST) {
 				returnString = builder.getHost();
@@ -634,7 +635,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 			} else if (urlInfo == URL_INFORMATION.PROTOCOL) {
 				returnString = builder.getScheme();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.warn("Unable to determine host name for: " + serverURL, e);
 		}
 
@@ -643,7 +644,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Fully resolved URL, used to instantiate SDK Proxy Objects.
-	 * 
+	 *
 	 * @return the server url
 	 */
 	@Override
@@ -654,7 +655,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Sets the internal server URL so that it can determine host and port
 	 * information.
-	 * 
+	 *
 	 * @param serverURL
 	 *            the new server url
 	 */
@@ -665,17 +666,17 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Gets the props.
-	 * 
+	 *
 	 * @return the props
 	 */
 	@Override
 	public Properties getProps() {
-		return props;
+		return props.getProperties();
 	}
 
 	/**
 	 * Gets the server list location.
-	 * 
+	 *
 	 * @return the server list location
 	 */
 	private String getServerListLocation() {
@@ -684,7 +685,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Sets the server list location.
-	 * 
+	 *
 	 * @param serverListLocation
 	 *            the new server list location
 	 */
@@ -699,7 +700,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 
 	/**
 	 * Deprecated, use serverSerbean(bean, APPLICATION)
-	 * 
+	 *
 	 * @param serverBean
 	 */
 
@@ -711,7 +712,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Allows the user to add server beans Useful in the case of a non-standard
 	 * configuration.
-	 * 
+	 *
 	 * @param bean
 	 */
 	@Override
@@ -728,7 +729,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Returns the email configuration object. This contains the required email
 	 * protocol information - SMTP address - SMTP TO - SMTP From
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -761,7 +762,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Set the proxy bean explicitly, use only if Proxy settings are not being
 	 * derived by way of inputstream.
-	 * 
+	 *
 	 * @param pb
 	 */
 	public void setProxyBean(final ProxyBean pb) {

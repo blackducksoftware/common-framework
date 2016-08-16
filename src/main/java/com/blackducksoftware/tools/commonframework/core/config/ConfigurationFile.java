@@ -23,17 +23,13 @@
 package com.blackducksoftware.tools.commonframework.core.config;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import net.jmatrix.eproperties.EProperties;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -154,22 +150,11 @@ public class ConfigurationFile {
 			throw new IllegalArgumentException(msg);
 		}
 		props = new EProperties();
-		InputStream is = null;
 		try {
-			is = new FileInputStream(file);
-			props.load(is);
+			props.load(file);
 		} catch (final Exception e) {
 			final String msg = "Error loading properties from file: "
 					+ file.getAbsolutePath() + ": " + e.getMessage();
-			log.error(msg);
-			throw new IllegalArgumentException(msg);
-		}
-
-		try {
-			is.close();
-		} catch (final IOException e) {
-			final String msg = "Error closing file: " + file.getAbsolutePath() + ": "
-					+ e.getMessage();
 			log.error(msg);
 			throw new IllegalArgumentException(msg);
 		}
@@ -194,7 +179,7 @@ public class ConfigurationFile {
 	 * @param targetProps
 	 */
 	public void copyProperties(final Properties targetProps) {
-		targetProps.putAll(props);
+		targetProps.putAll(props.getProperties());
 	}
 
 	/**
@@ -216,7 +201,7 @@ public class ConfigurationFile {
 				// of the property name?
 				// IF the psw lazy-loaded, then it wouldn't matter so much
 				final ConfigurationPassword psw = ConfigurationPassword
-						.createFromLine(props, line);
+.createFromLine(props.getProperties(), line);
 				if (psw.isInNeedOfEncryption()) {
 					String encryptedLine = null;
 					try {
@@ -344,7 +329,7 @@ public class ConfigurationFile {
 			if (isPasswordLine(line)) {
 				// This is a *.password= line; does it need encrypting?
 				final ConfigurationPassword psw = ConfigurationPassword
-						.createFromLine(props, line);
+.createFromLine(props.getProperties(), line);
 				configurationPasswords.put(psw.getPropertyName(), psw);
 			}
 		}
