@@ -50,10 +50,8 @@ import com.blackducksoftware.tools.commonframework.core.encryption.Password;
  * <p>
  * Password encryption works as follows:
  * <p>
- * *.password.isencrypted missing means: encrypt this password.
- *  <br>
- * *.password.isencrypted=true means: this password is already encrypted.
- *  <br>
+ * *.password.isencrypted missing means: encrypt this password. <br>
+ * *.password.isencrypted=true means: this password is already encrypted. <br>
  * *.password.isencrypted=false means: do not encrypt this password
  * <p>
  * Users will enter plain text passwords into the config file, and the utility
@@ -99,283 +97,283 @@ import com.blackducksoftware.tools.commonframework.core.encryption.Password;
  *
  */
 public class ConfigurationFile {
-    private final Logger log = LoggerFactory.getLogger(this.getClass()
-	    .getName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass()
+			.getName());
 
-    private final File file;
+	private final File file;
 
-    private boolean inNeedOfUpdate = false; // are there any passwords that need
-					    // to be encrypted?
+	private boolean inNeedOfUpdate = false; // are there any passwords that need
+	// to be encrypted?
 
-    private List<String> lines; // The original file contents
+	private List<String> lines; // The original file contents
 
-    private EProperties props; // The original properties from the file
+	private final EProperties props; // The original properties from the file
 
-    private Map<String, ConfigurationPassword> configurationPasswords; // a list
-								       // of
-								       // passwords
-								       // that
-								       // appear
-								       // in the
-								       // file
+	private final Map<String, ConfigurationPassword> configurationPasswords; // a list
+	// of
+	// passwords
+	// that
+	// appear
+	// in the
+	// file
 
-    private static final String PASSWORD_LINE_PATTERN_STRING = "^[a-zA-Z_\\-0-9.]*\\."
-	    + ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX + "=.*";
+	private static final String PASSWORD_LINE_PATTERN_STRING = "^[a-zA-Z_\\-0-9.]*\\."
+			+ ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX + "=.*";
 
-    private static final String PASSWORD_ISPLAINTEXT_LINE_PATTERN_STRING = "^[a-zA-Z_\\-0-9.]*\\."
-	    + ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX
-	    + "."
-	    + ConfigConstants.PASSWORD_ISPLAINTEXT_SUFFIX + "=.*";
+	private static final String PASSWORD_ISPLAINTEXT_LINE_PATTERN_STRING = "^[a-zA-Z_\\-0-9.]*\\."
+			+ ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX
+			+ "."
+			+ ConfigConstants.PASSWORD_ISPLAINTEXT_SUFFIX + "=.*";
 
-    private final List<Character> badChars;
+	private final List<Character> badChars;
 
-    // TODO: Use Pattern and Matcher
-    // private Pattern passwordLinePattern =
-    // Pattern.compile(PASSWORD_LINE_PATTERN_STRING);
+	// TODO: Use Pattern and Matcher
+	// private Pattern passwordLinePattern =
+	// Pattern.compile(PASSWORD_LINE_PATTERN_STRING);
 
-    /**
-     * Construct a new ConfigurationFile given the file path. Load up a
-     * Properties object, and the lines array.
-     *
-     * @param configFilePath
-     *            the path to the config file.
-     */
-    public ConfigurationFile(String configFilePath) {
-	file = new File(configFilePath);
-	if (!file.exists()) {
-	    String msg = "Configuration file: " + configFilePath
-		    + " does not exist";
-	    log.error(msg);
-	    // A ConfigurationManager test depends on this message:
-	    throw new IllegalArgumentException("File DNE @: " + configFilePath);
-	}
-	if (!file.canRead()) {
-	    String msg = "Configuration file: " + configFilePath
-		    + " is not readable";
-	    log.error(msg);
-	    throw new IllegalArgumentException(msg);
-	}
-	props = new EProperties();
-	InputStream is = null;
-	try {
-	    is = new FileInputStream(file);
-	    props.load(is);
-	} catch (Exception e) {
-	    String msg = "Error loading properties from file: "
-		    + file.getAbsolutePath() + ": " + e.getMessage();
-	    log.error(msg);
-	    throw new IllegalArgumentException(msg);
-	}
-
-	try {
-	    is.close();
-	} catch (IOException e) {
-	    String msg = "Error closing file: " + file.getAbsolutePath() + ": "
-		    + e.getMessage();
-	    log.error(msg);
-	    throw new IllegalArgumentException(msg);
-	}
-
-	try {
-	    lines = FileUtils.readLines(file, "UTF-8");
-	} catch (IOException e) {
-	    String msg = "Error reading file: " + file.getAbsolutePath() + ": "
-		    + e.getMessage();
-	    log.error(msg);
-	    throw new IllegalArgumentException(msg);
-	}
-	configurationPasswords = loadConfigurationPasswords();
-	inNeedOfUpdate = hasPasswordsNeedingEncryptionOrPropertyUpdate();
-
-	badChars = Arrays.asList(Password.PROPERTY_VALUE_PROBLEMATIC_CHARS);
-    }
-
-    /**
-     * Load the config file's properties into the given Properties object.
-     *
-     * @param targetProps
-     */
-    public void copyProperties(Properties targetProps) {
-	targetProps.putAll(props);
-    }
-
-    /**
-     * Updates the file on disk by encrypting all passwords that should be
-     * encrypted. Passwords with *.password.isencrypted=false are not encrypted.
-     *
-     * @throws Exception
-     */
-    private List<String> encryptPasswords() throws Exception {
-	List<String> updatedLines = new ArrayList<String>(lines.size() + 10);
-	for (String line : lines) {
-	    if (isPasswordIsPlainTextLine(line)) {
-		continue; // omit *.password.isplaintext= lines from output
-	    }
-	    if (isPasswordLine(line)) {
-		// TODO: It's overkill to re-create the ConfigurationPassword;
-		// all you really need is the property name
-		// then can look it up in the map. Maybe factor out the parsing
-		// of the property name?
-		// IF the psw lazy-loaded, then it wouldn't matter so much
-		ConfigurationPassword psw = ConfigurationPassword
-			.createFromLine(props, line);
-		if (psw.isInNeedOfEncryption()) {
-		    String encryptedLine = null;
-		    try {
-			// In file, backslashes must be escaped (with a
-			// backslash)
-			encryptedLine = psw.getPropertyName() + "="
-				+ escape(psw.getEncrypted());
-		    } catch (Exception e) {
-			log.error("Error encrypting passwords in file: "
-				+ file.getAbsolutePath() + ": "
-				+ e.getMessage());
-			throw e;
-		    }
-		    updatedLines.add(encryptedLine);
-
-		} else {
-		    updatedLines.add(line); // if no encryption needed: just
-					    // leave the original line
+	/**
+	 * Construct a new ConfigurationFile given the file path. Load up a
+	 * Properties object, and the lines array.
+	 *
+	 * @param configFilePath
+	 *            the path to the config file.
+	 */
+	public ConfigurationFile(final String configFilePath) {
+		file = new File(configFilePath);
+		if (!file.exists()) {
+			final String msg = "Configuration file: " + configFilePath
+					+ " does not exist";
+			log.error(msg);
+			// A ConfigurationManager test depends on this message:
+			throw new IllegalArgumentException("File DNE @: " + configFilePath);
 		}
-		if (psw.isInNeedOfNewEncryptionProperty()) {
-		    String value = psw.isEncryptedAfterUpgrade() ? "true"
-			    : "false";
-		    updatedLines.add(psw.getPropertyName() + "."
-			    + ConfigConstants.PASSWORD_ISENCRYPTED_SUFFIX + "="
-			    + value);
+		if (!file.canRead()) {
+			final String msg = "Configuration file: " + configFilePath
+					+ " is not readable";
+			log.error(msg);
+			throw new IllegalArgumentException(msg);
 		}
-	    } else {
-		updatedLines.add(line);
-	    }
+		props = new EProperties();
+		InputStream is = null;
+		try {
+			is = new FileInputStream(file);
+			props.load(is);
+		} catch (final Exception e) {
+			final String msg = "Error loading properties from file: "
+					+ file.getAbsolutePath() + ": " + e.getMessage();
+			log.error(msg);
+			throw new IllegalArgumentException(msg);
+		}
+
+		try {
+			is.close();
+		} catch (final IOException e) {
+			final String msg = "Error closing file: " + file.getAbsolutePath() + ": "
+					+ e.getMessage();
+			log.error(msg);
+			throw new IllegalArgumentException(msg);
+		}
+
+		try {
+			lines = FileUtils.readLines(file, "UTF-8");
+		} catch (final IOException e) {
+			final String msg = "Error reading file: " + file.getAbsolutePath() + ": "
+					+ e.getMessage();
+			log.error(msg);
+			throw new IllegalArgumentException(msg);
+		}
+		configurationPasswords = loadConfigurationPasswords();
+		inNeedOfUpdate = hasPasswordsNeedingEncryptionOrPropertyUpdate();
+
+		badChars = Arrays.asList(Password.PROPERTY_VALUE_PROBLEMATIC_CHARS);
 	}
-	return updatedLines;
-    }
 
-    /**
-     * Escape the given string, escaping any backslash characters with another
-     * backslash
-     *
-     * @param s
-     * @return
-     */
-    private String escape(String s) {
-
-	byte[] bufferIn = s.getBytes();
-	StringBuilder sb = new StringBuilder();
-	for (int bufferInIndex = 0; bufferInIndex < bufferIn.length; bufferInIndex++) {
-
-	    Character c = new Character(s.charAt(bufferInIndex));
-	    if (badChars.contains(c)) {
-		sb.append('\\');
-	    }
-	    sb.append(c);
+	/**
+	 * Load the config file's properties into the given Properties object.
+	 *
+	 * @param targetProps
+	 */
+	public void copyProperties(final Properties targetProps) {
+		targetProps.putAll(props);
 	}
 
-	String escapedString = sb.toString();
-	return escapedString;
-    }
+	/**
+	 * Updates the file on disk by encrypting all passwords that should be
+	 * encrypted. Passwords with *.password.isencrypted=false are not encrypted.
+	 *
+	 * @throws Exception
+	 */
+	private List<String> encryptPasswords() throws Exception {
+		final List<String> updatedLines = new ArrayList<String>(lines.size() + 10);
+		for (final String line : lines) {
+			if (isPasswordIsPlainTextLine(line)) {
+				continue; // omit *.password.isplaintext= lines from output
+			}
+			if (isPasswordLine(line)) {
+				// TODO: It's overkill to re-create the ConfigurationPassword;
+				// all you really need is the property name
+				// then can look it up in the map. Maybe factor out the parsing
+				// of the property name?
+				// IF the psw lazy-loaded, then it wouldn't matter so much
+				final ConfigurationPassword psw = ConfigurationPassword
+						.createFromLine(props, line);
+				if (psw.isInNeedOfEncryption()) {
+					String encryptedLine = null;
+					try {
+						// In file, backslashes must be escaped (with a
+						// backslash)
+						encryptedLine = psw.getPropertyName() + "="
+								+ escape(psw.getEncrypted());
+					} catch (final Exception e) {
+						log.error("Error encrypting passwords in file: "
+								+ file.getAbsolutePath() + ": "
+								+ e.getMessage());
+						throw e;
+					}
+					updatedLines.add(encryptedLine);
 
-    /**
-     * Save the file, encrypting passwords that need it. Does not change the
-     * state of this object (lines and props continue to contain the original
-     * file contents).
-     *
-     * @return
-     * @throws IllegalArgumentException
-     *             to avoid the need to change ConfigurationManager too much.
-     */
-    public List<String> saveWithEncryptedPasswords() {
-	if (!isInNeedOfUpdate()) {
-	    return null;
+				} else {
+					updatedLines.add(line); // if no encryption needed: just
+					// leave the original line
+				}
+				if (psw.isInNeedOfNewEncryptionProperty()) {
+					final String value = psw.isEncryptedAfterUpgrade() ? "true"
+							: "false";
+					updatedLines.add(psw.getPropertyName() + "."
+							+ ConfigConstants.PASSWORD_ISENCRYPTED_SUFFIX + "="
+							+ value);
+				}
+			} else {
+				updatedLines.add(line);
+			}
+		}
+		return updatedLines;
 	}
-	log.info("Updating configuration file " + file.getAbsolutePath()
-		+ "; encrypting passwords and adjusting password properties.");
-	List<String> updatedLines = null;
-	try {
-	    updatedLines = encryptPasswords();
-	} catch (Exception e) {
-	    String msg = "Error encrypting passwords for file: "
-		    + file.getAbsolutePath() + ": " + e.getMessage();
-	    log.error(msg);
-	    throw new IllegalArgumentException(msg);
+
+	/**
+	 * Escape the given string, escaping any backslash characters with another
+	 * backslash
+	 *
+	 * @param s
+	 * @return
+	 */
+	private String escape(final String s) {
+
+		final byte[] bufferIn = s.getBytes();
+		final StringBuilder sb = new StringBuilder();
+		for (int bufferInIndex = 0; bufferInIndex < bufferIn.length; bufferInIndex++) {
+
+			final Character c = new Character(s.charAt(bufferInIndex));
+			if (badChars.contains(c)) {
+				sb.append('\\');
+			}
+			sb.append(c);
+		}
+
+		final String escapedString = sb.toString();
+		return escapedString;
 	}
-	try {
-	    FileUtils.writeLines(file, updatedLines);
-	} catch (IOException e) {
-	    String msg = "Error saving file: " + file.getAbsolutePath() + ": "
-		    + e.getMessage();
-	    log.error(msg);
-	    throw new IllegalArgumentException(msg);
+
+	/**
+	 * Save the file, encrypting passwords that need it. Does not change the
+	 * state of this object (lines and props continue to contain the original
+	 * file contents).
+	 *
+	 * @return
+	 * @throws IllegalArgumentException
+	 *             to avoid the need to change ConfigurationManager too much.
+	 */
+	public List<String> saveWithEncryptedPasswords() {
+		if (!isInNeedOfUpdate()) {
+			return null;
+		}
+		log.info("Updating configuration file " + file.getAbsolutePath()
+				+ "; encrypting passwords and adjusting password properties.");
+		List<String> updatedLines = null;
+		try {
+			updatedLines = encryptPasswords();
+		} catch (final Exception e) {
+			final String msg = "Error encrypting passwords for file: "
+					+ file.getAbsolutePath() + ": " + e.getMessage();
+			log.error(msg);
+			throw new IllegalArgumentException(msg);
+		}
+		try {
+			FileUtils.writeLines(file, updatedLines);
+		} catch (final IOException e) {
+			final String msg = "Error saving file: " + file.getAbsolutePath() + ": "
+					+ e.getMessage();
+			log.error(msg);
+			throw new IllegalArgumentException(msg);
+		}
+		return updatedLines;
 	}
-	return updatedLines;
-    }
 
-    /**
-     * Get the original file contents.
-     *
-     * @return
-     */
-    List<String> getLines() {
-	return lines;
-    }
-
-    /**
-     * Is this a *.password= line?
-     *
-     * @param line
-     * @return
-     */
-    private boolean isPasswordLine(String line) {
-	return line.matches(PASSWORD_LINE_PATTERN_STRING);
-    }
-
-    private boolean isPasswordIsPlainTextLine(String line) {
-	return line.matches(PASSWORD_ISPLAINTEXT_LINE_PATTERN_STRING);
-    }
-
-    /**
-     * Get the list of passwords (and metadata) contained in this file
-     *
-     * @return
-     */
-    private Map<String, ConfigurationPassword> loadConfigurationPasswords() {
-	Map<String, ConfigurationPassword> configurationPasswords = new HashMap<String, ConfigurationPassword>(
-		8);
-	for (String line : lines) {
-	    if (isPasswordLine(line)) {
-		// This is a *.password= line; does it need encrypting?
-		ConfigurationPassword psw = ConfigurationPassword
-			.createFromLine(props, line);
-		configurationPasswords.put(psw.getPropertyName(), psw);
-	    }
+	/**
+	 * Get the original file contents.
+	 *
+	 * @return
+	 */
+	List<String> getLines() {
+		return lines;
 	}
-	return configurationPasswords;
-    }
 
-    /**
-     * Determine whether this file needs any password-related changes. Either
-     * passwords that need encrypting or password meta-property changes. It
-     * turns out the latter test also covers obsolete meta-property removal,
-     * because if that's true, then "needs a new encryption property" is also
-     * true.
-     *
-     * @return
-     */
-    private boolean hasPasswordsNeedingEncryptionOrPropertyUpdate() {
-	for (String pswPropertyName : configurationPasswords.keySet()) {
-	    ConfigurationPassword psw = configurationPasswords
-		    .get(pswPropertyName);
-	    if (psw.isInNeedOfEncryption()
-		    || psw.isInNeedOfNewEncryptionProperty()) {
-		return true;
-	    }
+	/**
+	 * Is this a *.password= line?
+	 *
+	 * @param line
+	 * @return
+	 */
+	private boolean isPasswordLine(final String line) {
+		return line.matches(PASSWORD_LINE_PATTERN_STRING);
 	}
-	return false;
-    }
 
-    public boolean isInNeedOfUpdate() {
-	return inNeedOfUpdate;
-    }
+	private boolean isPasswordIsPlainTextLine(final String line) {
+		return line.matches(PASSWORD_ISPLAINTEXT_LINE_PATTERN_STRING);
+	}
+
+	/**
+	 * Get the list of passwords (and metadata) contained in this file
+	 *
+	 * @return
+	 */
+	private Map<String, ConfigurationPassword> loadConfigurationPasswords() {
+		final Map<String, ConfigurationPassword> configurationPasswords = new HashMap<String, ConfigurationPassword>(
+				8);
+		for (final String line : lines) {
+			if (isPasswordLine(line)) {
+				// This is a *.password= line; does it need encrypting?
+				final ConfigurationPassword psw = ConfigurationPassword
+						.createFromLine(props, line);
+				configurationPasswords.put(psw.getPropertyName(), psw);
+			}
+		}
+		return configurationPasswords;
+	}
+
+	/**
+	 * Determine whether this file needs any password-related changes. Either
+	 * passwords that need encrypting or password meta-property changes. It
+	 * turns out the latter test also covers obsolete meta-property removal,
+	 * because if that's true, then "needs a new encryption property" is also
+	 * true.
+	 *
+	 * @return
+	 */
+	private boolean hasPasswordsNeedingEncryptionOrPropertyUpdate() {
+		for (final String pswPropertyName : configurationPasswords.keySet()) {
+			final ConfigurationPassword psw = configurationPasswords
+					.get(pswPropertyName);
+			if (psw.isInNeedOfEncryption()
+					|| psw.isInNeedOfNewEncryptionProperty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isInNeedOfUpdate() {
+		return inNeedOfUpdate;
+	}
 
 }
