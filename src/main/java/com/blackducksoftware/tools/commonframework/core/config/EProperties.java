@@ -20,7 +20,7 @@ public class EProperties {
 	private Properties propertiesObject; // lazily-generated
 
 	public EProperties() {
-		logger.info("EProperties() constructor");
+		logger.debug("EProperties() constructor");
 	}
 
 	public void load(final File file) throws CommonFrameworkException {
@@ -34,14 +34,12 @@ public class EProperties {
 					+ e.getMessage());
 		}
 		getProperties();
-		logger.info("load(): hasNext: " + config.getKeys().hasNext());
 	}
 
 	public Properties getProperties() {
 		if (config == null) {
 			logger.warn("getProperties(): config is null!");
 		}
-		logger.info("getProperties(): hasNext: " + config.getKeys().hasNext());
 		if (propertiesObject != null) {
 			return propertiesObject;
 		}
@@ -49,7 +47,7 @@ public class EProperties {
 		final Iterator<String> iter = config.getKeys();
 		while (iter.hasNext()) {
 			final String key = iter.next();
-			logger.info("getProperties(): including: " + key + "=" + config.getString(key));
+			logger.debug("getProperties(): including: " + key + "=" + config.getString(key));
 			propertiesObject.put(key, config.getString(key));
 		}
 		return propertiesObject;
@@ -60,7 +58,7 @@ public class EProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
-			logger.info("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
+			logger.debug("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
 			config.addProperty(key, sourceProps.getProperty(key));
 		}
 		getProperties();

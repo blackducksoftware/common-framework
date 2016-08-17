@@ -166,10 +166,8 @@ public class Password {
 		final byte[] encryptedPasswordBinary = encryptStringToBinary(password);
 		final byte[] encryptedPasswordAscii = Ascii85Encoder
 				.encode(encryptedPasswordBinary); // encode binary to ascii
-		encryptedPassword = new String(encryptedPasswordAscii, UTF8).trim(); // convert
-		// to
-		// String
-		logger.info("Final encoded psw: " + encryptedPassword);
+		encryptedPassword = new String(encryptedPasswordAscii, UTF8).trim();
+		logger.debug("Final encrypted/encoded psw: " + encryptedPassword);
 		return encryptedPassword;
 	}
 

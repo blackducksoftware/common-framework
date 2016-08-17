@@ -248,18 +248,14 @@ public class ConfigurationPassword {
 	}
 
 	private String unescape(String s, final List<Character> charsToUnEscape) {
-		logger.info("unescape(): Before: " + s);
 		final StringBuilder sb = new StringBuilder("\\x");
 
 		for (final Character c : charsToUnEscape) {
 			sb.setCharAt(1, c);
 			final String target = sb.toString();
 			final String replacement = String.valueOf(c);
-			logger.info("unescape(): Target: " + target + "; Replacement: " + replacement);
 			s = s.replace(target, replacement);
-			logger.info("unescape(): Interim: " + s);
 		}
-		logger.info("unescape(): After: " + s);
 		return s;
 	}
 

@@ -241,21 +241,18 @@ public class ConfigurationFile {
 	 * @return
 	 */
 	private String escape(final String s, final List<Character> escapedChars) {
-		log.info("escape(): String to escape: " + s);
 		final byte[] bufferIn = s.getBytes();
 		final StringBuilder sb = new StringBuilder();
 		for (int bufferInIndex = 0; bufferInIndex < bufferIn.length; bufferInIndex++) {
 
 			final Character c = new Character(s.charAt(bufferInIndex));
 			if (escapedChars.contains(c)) {
-				log.info("Escaping: " + c);
 				sb.append('\\');
 			}
 			sb.append(c);
 		}
 
 		final String escapedString = sb.toString();
-		log.info("escape(): escapedString: " + escapedString);
 		return escapedString;
 	}
 
