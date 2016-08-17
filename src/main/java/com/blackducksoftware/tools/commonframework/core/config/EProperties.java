@@ -9,15 +9,18 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.tools.commonframework.core.exception.CommonFrameworkException;
 
 public class EProperties {
-	private Configuration props = new PropertiesConfiguration();
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+	private Configuration config = new PropertiesConfiguration();
 	private Properties propertiesObject; // lazily-generated
 
 	public EProperties() {
-		System.out.println("EProperties() constructor");
+		logger.info("EProperties() constructor");
 	}
 
 	public void load(final File file) throws CommonFrameworkException {
@@ -25,27 +28,29 @@ public class EProperties {
 
 		final Configurations configs = new Configurations();
 		try {
-			props = configs.properties(file);
+			config = configs.properties(file);
 		} catch (final ConfigurationException e) {
 			throw new CommonFrameworkException("Error loading properties from file " + file.getAbsolutePath() + ": "
 					+ e.getMessage());
 		}
-		System.out.println("load(): hasNext: " + props.getKeys().hasNext());
+		getProperties();
+		logger.info("load(): hasNext: " + config.getKeys().hasNext());
 	}
 
 	public Properties getProperties() {
-		if (props == null) {
-			System.out.println("getProperties(): props is null!");
+		if (config == null) {
+			logger.warn("getProperties(): config is null!");
 		}
-		System.out.println("getProperties(): hasNext: " + props.getKeys().hasNext());
+		logger.info("getProperties(): hasNext: " + config.getKeys().hasNext());
 		if (propertiesObject != null) {
 			return propertiesObject;
 		}
 		propertiesObject = new Properties();
-		final Iterator<String> iter = props.getKeys();
+		final Iterator<String> iter = config.getKeys();
 		while (iter.hasNext()) {
 			final String key = iter.next();
-			propertiesObject.put(key, props.getString(key));
+			logger.info("getProperties(): including: " + key + "=" + config.getString(key));
+			propertiesObject.put(key, config.getString(key));
 		}
 		return propertiesObject;
 	}
@@ -55,20 +60,27 @@ public class EProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
-			props.addProperty(key, sourceProps.getProperty(key));
+			logger.info("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
+			config.addProperty(key, sourceProps.getProperty(key));
 		}
+		getProperties();
+	}
+
+	public void setProperty(final String key, final String value) {
+		config.setProperty(key, value);
+		getProperties().setProperty(key, value);
 	}
 
 	public boolean containsKey(final String key) {
-		return props.containsKey(key);
+		return config.containsKey(key);
 	}
 
 	public String get(final String key) {
-		return props.getString(key);
+		return config.getString(key);
 	}
 
 	public String getProperty(final String key) {
-		return props.getString(key);
+		return config.getString(key);
 	}
 
 	public Set<Object> keySet() {
@@ -77,5 +89,10 @@ public class EProperties {
 
 	public int size() {
 		return getProperties().size();
+	}
+
+	@Override
+	public String toString() {
+		return getProperties().toString();
 	}
 }

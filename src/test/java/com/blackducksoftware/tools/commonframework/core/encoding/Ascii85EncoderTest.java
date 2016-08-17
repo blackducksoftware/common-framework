@@ -37,73 +37,73 @@ import org.junit.Test;
 import com.blackducksoftware.tools.commonframework.core.encryption.Password;
 
 /**
- * 
+ *
  * @author sbillings
  *
  */
 public class Ascii85EncoderTest {
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+	private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private static Random rand = new Random(System.currentTimeMillis());
+	private static Random rand = new Random(System.currentTimeMillis());
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
-
-    @Test
-    public void test() throws Exception {
-	int numTests = 10000; // 10K is a good number
-
-	for (int i = 0; i < numTests; i++) {
-	    String psw = generateRandomPassword(64);
-	    testPassword(psw);
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
 	}
-    }
 
-    private void testPassword(String origString) throws Exception {
-	byte[] encryptedBinary = Password.encryptStringToBinary(origString);
-	byte[] encodedBytes = Ascii85Encoder.encode(encryptedBinary);
-	assertTrue(isAscii(encodedBytes));
+	@Test
+	public void test() throws Exception {
+		final int numTests = 10000; // 10K is a good number
 
-	String encodedString = new String(encodedBytes, UTF8);
-	byte[] decodedBytes = Ascii85Encoder.decode(encodedString.getBytes());
-	String decryptedString = Password.decryptBinaryToString(decodedBytes);
-	assertEquals(origString, decryptedString);
-    }
-
-    public static String generateRandomPassword(int maxLen) {
-	List<Character> badChars = Arrays
-		.asList(Password.PROPERTY_VALUE_PROBLEMATIC_CHARS);
-
-	int len = 0;
-	while (len < Password.MIN_LENGTH) {
-	    len = rand.nextInt() % maxLen;
-	}
-	byte[] outputBuffer = new byte[len];
-
-	int numPossibleCharValues = Password.MAX_CHAR_VALUE
-		- Password.MIN_CHAR_VALUE + 1;
-	for (int i = 0; i < len; i++) {
-
-	    int charValue = -1;
-	    do {
-		int charValueOffset = -1;
-		while (charValueOffset < 0) {
-		    charValueOffset = rand.nextInt();
+		for (int i = 0; i < numTests; i++) {
+			final String psw = generateRandomPassword(64);
+			testPassword(psw);
 		}
-		charValue = Password.MIN_CHAR_VALUE + charValueOffset
-			% numPossibleCharValues;
-	    } while (badChars.contains(new Character((char) charValue)));
-
-	    outputBuffer[i] = (byte) charValue;
 	}
-	String randomString = new String(outputBuffer, UTF8);
-	return randomString;
-    }
 
-    private boolean isAscii(byte[] bytes) {
-	String stringToTest = new String(bytes, UTF8);
-	return StringUtils.isAsciiPrintable(stringToTest);
-    }
+	private void testPassword(final String origString) throws Exception {
+		final byte[] encryptedBinary = Password.encryptStringToBinary(origString);
+		final byte[] encodedBytes = Ascii85Encoder.encode(encryptedBinary);
+		assertTrue(isAscii(encodedBytes));
+
+		final String encodedString = new String(encodedBytes, UTF8);
+		final byte[] decodedBytes = Ascii85Encoder.decode(encodedString.getBytes());
+		final String decryptedString = Password.decryptBinaryToString(decodedBytes);
+		assertEquals(origString, decryptedString);
+	}
+
+	public static String generateRandomPassword(final int maxLen) {
+		final List<Character> badChars = Arrays
+				.asList(Password.PROHIBITED_CHARS);
+
+		int len = 0;
+		while (len < Password.MIN_LENGTH) {
+			len = rand.nextInt() % maxLen;
+		}
+		final byte[] outputBuffer = new byte[len];
+
+		final int numPossibleCharValues = Password.MAX_CHAR_VALUE
+				- Password.MIN_CHAR_VALUE + 1;
+		for (int i = 0; i < len; i++) {
+
+			int charValue = -1;
+			do {
+				int charValueOffset = -1;
+				while (charValueOffset < 0) {
+					charValueOffset = rand.nextInt();
+				}
+				charValue = Password.MIN_CHAR_VALUE + charValueOffset
+						% numPossibleCharValues;
+			} while (badChars.contains(new Character((char) charValue)));
+
+			outputBuffer[i] = (byte) charValue;
+		}
+		final String randomString = new String(outputBuffer, UTF8);
+		return randomString;
+	}
+
+	private boolean isAscii(final byte[] bytes) {
+		final String stringToTest = new String(bytes, UTF8);
+		return StringUtils.isAsciiPrintable(stringToTest);
+	}
 
 }

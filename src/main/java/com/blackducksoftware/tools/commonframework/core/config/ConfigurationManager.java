@@ -202,7 +202,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 */
 	private void loadPropertiesFromFile(final String configFileLocation) {
 		configFile = new ConfigurationFile(configFileLocation);
-		configFile.copyProperties(props.getProperties());
+		configFile.copyTo(props);
 		configFile.saveWithEncryptedPasswords();
 	}
 
@@ -310,7 +310,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		// The messy work of interpreting the possibly-plain-text,
 		// possibly-encrypted, possibly-base64-encoded password
 		// is delegated to ConfigurationPassword
-		final ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(getProps(),
+		final ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(props,
 				EMAIL_AUTH_PASSWORD_PREFIX);
 		emailConfiguration.setAuthPassword(configurationPassword.getPlainText());
 
@@ -368,7 +368,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		// The messy work of interpreting the possibly-plain-text,
 		// possibly-encrypted, possibly-base64-encoded password
 		// is delegated to ConfigurationPassword
-		final ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(getProps(),
+		final ConfigurationPassword configurationPassword = ConfigurationPassword.createFromProperty(props,
 				propertyPrefix);
 
 		final ServerBean serverBean = new ServerBean(server, userName, configurationPassword.getPlainText(),

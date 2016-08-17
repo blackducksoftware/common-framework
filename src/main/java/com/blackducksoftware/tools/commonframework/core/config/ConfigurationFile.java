@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -121,7 +120,7 @@ public class ConfigurationFile {
 			+ "."
 			+ ConfigConstants.PASSWORD_ISPLAINTEXT_SUFFIX + "=.*";
 
-	private final List<Character> badChars;
+	private final List<Character> escapedChars;
 
 	// TODO: Use Pattern and Matcher
 	// private Pattern passwordLinePattern =
@@ -169,17 +168,16 @@ public class ConfigurationFile {
 		}
 		configurationPasswords = loadConfigurationPasswords();
 		inNeedOfUpdate = hasPasswordsNeedingEncryptionOrPropertyUpdate();
-
-		badChars = Arrays.asList(Password.PROPERTY_VALUE_PROBLEMATIC_CHARS);
+		escapedChars = Arrays.asList(Password.ESCAPED_CHARS);
 	}
 
 	/**
-	 * Load the config file's properties into the given Properties object.
+	 * Load the config file's properties into the given EProperties object.
 	 *
 	 * @param targetProps
 	 */
-	public void copyProperties(final Properties targetProps) {
-		targetProps.putAll(props.getProperties());
+	public void copyTo(final EProperties targetProps) {
+		targetProps.addAll(props.getProperties());
 	}
 
 	/**
@@ -201,14 +199,14 @@ public class ConfigurationFile {
 				// of the property name?
 				// IF the psw lazy-loaded, then it wouldn't matter so much
 				final ConfigurationPassword psw = ConfigurationPassword
-.createFromLine(props.getProperties(), line);
+						.createFromLine(props, line);
 				if (psw.isInNeedOfEncryption()) {
 					String encryptedLine = null;
 					try {
 						// In file, backslashes must be escaped (with a
 						// backslash)
 						encryptedLine = psw.getPropertyName() + "="
-								+ escape(psw.getEncrypted());
+ + escape(psw.getEncrypted(), escapedChars);
 					} catch (final Exception e) {
 						log.error("Error encrypting passwords in file: "
 								+ file.getAbsolutePath() + ": "
@@ -242,20 +240,22 @@ public class ConfigurationFile {
 	 * @param s
 	 * @return
 	 */
-	private String escape(final String s) {
-
+	private String escape(final String s, final List<Character> escapedChars) {
+		log.info("escape(): String to escape: " + s);
 		final byte[] bufferIn = s.getBytes();
 		final StringBuilder sb = new StringBuilder();
 		for (int bufferInIndex = 0; bufferInIndex < bufferIn.length; bufferInIndex++) {
 
 			final Character c = new Character(s.charAt(bufferInIndex));
-			if (badChars.contains(c)) {
+			if (escapedChars.contains(c)) {
+				log.info("Escaping: " + c);
 				sb.append('\\');
 			}
 			sb.append(c);
 		}
 
 		final String escapedString = sb.toString();
+		log.info("escape(): escapedString: " + escapedString);
 		return escapedString;
 	}
 
@@ -329,7 +329,7 @@ public class ConfigurationFile {
 			if (isPasswordLine(line)) {
 				// This is a *.password= line; does it need encrypting?
 				final ConfigurationPassword psw = ConfigurationPassword
-.createFromLine(props.getProperties(), line);
+						.createFromLine(props, line);
 				configurationPasswords.put(psw.getPropertyName(), psw);
 			}
 		}

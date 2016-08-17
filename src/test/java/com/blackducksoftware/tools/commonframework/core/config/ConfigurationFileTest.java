@@ -66,6 +66,33 @@ public class ConfigurationFileTest {
 	}
 
 	@Test
+	public void testSimplePassword() throws Exception {
+		final File configFile = File.createTempFile("soleng_framework_core_config_ConfigurationFileTest",
+				"testConfigFileRoundTrip");
+		filesToDelete.add(configFile);
+		configFile.deleteOnExit();
+
+		final Properties props = new Properties();
+		final String psw = "abc"; // TODO restore to: ">)?-*";
+		System.out.println("psw: " + psw);
+		props.setProperty("protex.server.name", "servername");
+		props.setProperty("protex.user.name", "username");
+		props.setProperty("protex.password", psw);
+
+		// Write the config file with plain txt password
+		configFile.delete();
+		props.store(new FileOutputStream(configFile), "test");
+
+		// First use will encrypt password
+		ConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+
+		// Second use will read encrypted password
+		config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+	}
+
+	@Test
 	public void testConfigFileRoundTrip() throws Exception {
 		final File configFile = File.createTempFile(
 				"soleng_framework_core_config_ConfigurationFileTest",
@@ -94,6 +121,7 @@ public class ConfigurationFileTest {
 			config = new TestProtexConfigurationManager(
 					configFile.getAbsolutePath());
 			assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+			System.out.println("==================");
 		}
 
 	}
@@ -103,7 +131,7 @@ public class ConfigurationFileTest {
 		final ConfigurationFile configFile = new ConfigurationFile(
 				"src/test/resources/psw_encryption/legacy_plain_notset.properties");
 		final EProperties props = new EProperties();
-		configFile.copyProperties(props.getProperties());
+		configFile.copyTo(props);
 
 		assertEquals(18, props.size());
 		assertEquals("connector_password",
