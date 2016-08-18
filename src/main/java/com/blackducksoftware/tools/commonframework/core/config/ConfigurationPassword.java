@@ -24,6 +24,7 @@ package com.blackducksoftware.tools.commonframework.core.config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.commons.codec.binary.Base64;
@@ -50,7 +51,7 @@ public class ConfigurationPassword {
 
 	// Consider lazy loading some of these properties
 	private String passwordInPlainText;
-	private EProperties props;
+	private Properties props;
 	private PasswordMetaProperties passwordMetaProperties;
 	private final String propertyName;
 	private final List<Character> manuallyUnescapedChars = Arrays.asList(Password.MANUALLY_UNESCAPED_CHARS);
@@ -82,7 +83,7 @@ public class ConfigurationPassword {
 	 * @return
 	 */
 	public static ConfigurationPassword createFromPropertyNoPrefix(
-			final EProperties props) {
+			final Properties props) {
 		return new ConfigurationPassword(props);
 	}
 
@@ -96,7 +97,7 @@ public class ConfigurationPassword {
 	 * @param suppliedAppNamePropertyName
 	 * @return
 	 */
-	public static ConfigurationPassword createFromProperty(final EProperties props,
+	public static ConfigurationPassword createFromProperty(final Properties props,
 			final String suppliedAppNamePropertyName) {
 		return new ConfigurationPassword(props, suppliedAppNamePropertyName);
 	}
@@ -109,7 +110,7 @@ public class ConfigurationPassword {
 	 * @param configFileLine
 	 * @return
 	 */
-	public static ConfigurationPassword createFromLine(final EProperties props,
+	public static ConfigurationPassword createFromLine(final Properties props,
 			final String configFileLine) {
 		// Parse the password prefix from the given config file line
 		Scanner scanner = null;
@@ -230,7 +231,7 @@ public class ConfigurationPassword {
 	 * @param props
 	 * @param propertyNamePrefix
 	 */
-	private ConfigurationPassword(final EProperties props, final String propertyNamePrefix) {
+	private ConfigurationPassword(final Properties props, final String propertyNamePrefix) {
 		propertyName = propertyNamePrefix + "."
 				+ ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX;
 		init(props);
@@ -242,7 +243,7 @@ public class ConfigurationPassword {
 	 * @param props
 	 * @param propertyNamePrefix
 	 */
-	private ConfigurationPassword(final EProperties props) {
+	private ConfigurationPassword(final Properties props) {
 		propertyName = ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX;
 		init(props);
 	}
@@ -259,7 +260,7 @@ public class ConfigurationPassword {
 		return s;
 	}
 
-	private void init(final EProperties props) {
+	private void init(final Properties props) {
 		this.props = props;
 		final String passwordPropertyValue = props.getProperty(propertyName);
 		if (passwordPropertyValue == null) {

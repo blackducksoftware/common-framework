@@ -73,7 +73,34 @@ public class ConfigurationFileTest {
 		configFile.deleteOnExit();
 
 		final Properties props = new Properties();
-		final String psw = "abc"; // TODO restore to: ">)?-*";
+		final String psw = "abc";
+		System.out.println("psw: " + psw);
+		props.setProperty("protex.server.name", "servername");
+		props.setProperty("protex.user.name", "username");
+		props.setProperty("protex.password", psw);
+
+		// Write the config file with plain txt password
+		configFile.delete();
+		props.store(new FileOutputStream(configFile), "test");
+
+		// First use will encrypt password
+		ConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+
+		// Second use will read encrypted password
+		config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+	}
+
+	@Test
+	public void testDollarSignPassword() throws Exception {
+		final File configFile = File.createTempFile("soleng_framework_core_config_ConfigurationFileTest",
+				"testConfigFileRoundTrip");
+		filesToDelete.add(configFile);
+		configFile.deleteOnExit();
+
+		final Properties props = new Properties();
+		final String psw = "P@_H~o$t&h4DSSO%.-J'_'W_ZY2X<QHxtz&Cg'+.g7.s49;8K2MFK~2Ar7]xp/g";
 		System.out.println("psw: " + psw);
 		props.setProperty("protex.server.name", "servername");
 		props.setProperty("protex.user.name", "username");

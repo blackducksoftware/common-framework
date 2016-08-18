@@ -199,14 +199,14 @@ public class ConfigurationFile {
 				// of the property name?
 				// IF the psw lazy-loaded, then it wouldn't matter so much
 				final ConfigurationPassword psw = ConfigurationPassword
-						.createFromLine(props, line);
+.createFromLine(props.getProperties(), line);
 				if (psw.isInNeedOfEncryption()) {
 					String encryptedLine = null;
 					try {
 						// In file, backslashes must be escaped (with a
 						// backslash)
 						encryptedLine = psw.getPropertyName() + "="
- + escape(psw.getEncrypted(), escapedChars);
+								+ escape(psw.getEncrypted(), escapedChars);
 					} catch (final Exception e) {
 						log.error("Error encrypting passwords in file: "
 								+ file.getAbsolutePath() + ": "
@@ -326,7 +326,7 @@ public class ConfigurationFile {
 			if (isPasswordLine(line)) {
 				// This is a *.password= line; does it need encrypting?
 				final ConfigurationPassword psw = ConfigurationPassword
-						.createFromLine(props, line);
+.createFromLine(props.getProperties(), line);
 				configurationPasswords.put(psw.getPropertyName(), psw);
 			}
 		}

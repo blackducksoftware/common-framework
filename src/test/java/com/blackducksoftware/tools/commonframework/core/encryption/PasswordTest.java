@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class PasswordTest {
 	private static final String EXPECTED_MSG = "Passwords must consist only of printable ASCII characters, "
-			+ "excluding whitespace, #, :, !, \\, =, |, [, {"
+			+ "excluding whitespace, #, :, !, \\, =, |, [, {, ("
 			+ ". Passwords must have a minimum length of 1 and a maximum length of 64.";
 
 	@BeforeClass

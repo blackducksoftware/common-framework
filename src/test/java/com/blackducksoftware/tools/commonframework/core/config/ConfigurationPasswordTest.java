@@ -27,6 +27,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Properties;
+
 import org.junit.Test;
 
 import com.blackducksoftware.tools.commonframework.core.config.ConfigurationPassword.PasswordMetaProperties;
@@ -47,7 +49,7 @@ public class ConfigurationPasswordTest {
 			throws Exception {
 
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("protex.password", "blackduck");
 
 		// Execute code under test
@@ -67,7 +69,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testLegacyProtexPasswordPlainTextIsplaintextTrue() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("protex.password", "blackduck");
 		props.setProperty("protex.password.isplaintext", "true");
 
@@ -88,7 +90,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testLegacyProtexPasswordBase64IsplaintextNotSet() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("protex.password", "YmxhY2tkdWNr");
 
 		// Execute code under test
@@ -109,7 +111,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testLegacyProtexPasswordBase64IsplaintextFalse() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("protex.password", "YmxhY2tkdWNr");
 		props.setProperty("protex.password.isplaintext", "false");
 
@@ -130,7 +132,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testLegacyScmPasswordPlainText() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("connector.0.password", "blackduck");
 
 		// Execute code under test
@@ -151,7 +153,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testLegacyScmPasswordBase64() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("connector.0.password", "YmxhY2tkdWNr");
 
 		// Execute code under test
@@ -173,7 +175,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testModernProtexPasswordPlainTextIsEncryptedNotSet() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("protex.password", "blackduck");
 
 		// Execute code under test
@@ -193,7 +195,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testModernProtexPasswordPlainTextIsEncryptedFalse() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("protex.password", "blackduck");
 		props.setProperty("protex.password.isencrypted", "false");
 
@@ -214,7 +216,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testModernProtexPasswordEncryptedIsEncryptedTrue() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty(
 				"protex.password",
 				"_=ZTu,6$3,7u>Ji3SHP(lI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_P");
@@ -237,7 +239,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testModernScmPasswordPlainTextIsEncryptedNotSet() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("connector.0.password", "blackduck");
 
 		// Execute code under test
@@ -258,7 +260,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testModernScmPasswordPlainTextIsEncryptedFalse() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("connector.0.password", "blackduck");
 		props.setProperty("connector.0.password.isencrypted", "false");
 
@@ -280,7 +282,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testModernScmPasswordEncryptedIsEncryptedTrue() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty(
 				"connector.0.password",
 				"_=ZTu,6$3,7u>Ji3SHP(lI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_P");
@@ -304,7 +306,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testPasswordWithNoPrefix() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("password", "blackduck");
 
 		// Execute code under test
@@ -324,7 +326,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testMissingPassword() throws Exception {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("typo.password", "blackduck");
 
 		// Execute code under test
@@ -338,7 +340,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testIncompatibleProperties() {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty(
 				"connector.0.password",
 				"_=ZTu,6$3,7u>Ji3SHP(lI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_PlI'nKT:u_P");
@@ -357,7 +359,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testNoPasswordProperties() throws Exception {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 
 		// Execute code under test
 		final ConfigurationPassword psw = ConfigurationPassword.createFromProperty(
@@ -370,7 +372,7 @@ public class ConfigurationPasswordTest {
 	@Test
 	public void testEmptyPassword() throws Exception {
 		// Setup
-		final EProperties props = new EProperties();
+		final Properties props = new Properties();
 		props.setProperty("connector.0.password", "");
 		props.setProperty("connector.0.password.isencrypted", "false");
 
