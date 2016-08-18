@@ -93,11 +93,6 @@ public class Password {
 
 	public static final Character[] MANUALLY_UNESCAPED_CHARS = { '(', '[', '$' };
 
-	// Message describing password rules
-	// TODO make this msg match char list above
-	private static final String PASSWORD_RULES_MSG = "Passwords must consist only of printable ASCII characters, excluding whitespace, \\, "
-			+ "#, =, |, $, (, [, and {. Passwords must have a minimum length of 1 and a maximum length of 64.";
-
 	// Encryption algorithm details
 	private static final String ENCRYPTION_ALGORITHM = "DES";
 
@@ -131,6 +126,8 @@ public class Password {
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
+	private static String passwordRulesMessage;
+
 	private Password() {
 	} // Hide the constructor; Static methods only
 
@@ -160,7 +157,7 @@ public class Password {
 			BadPaddingException, NoSuchPaddingException {
 
 		if (!isValidPassword(password)) {
-			throw new IllegalArgumentException(PASSWORD_RULES_MSG);
+			throw new IllegalArgumentException(getPasswordRulesMessage());
 		}
 		String encryptedPassword;
 		final byte[] encryptedPasswordBinary = encryptStringToBinary(password);
@@ -454,5 +451,27 @@ public class Password {
 		}
 
 		return key;
+	}
+
+	static String getPasswordRulesMessage() {
+		if (passwordRulesMessage != null) {
+			return passwordRulesMessage;
+		}
+
+		final StringBuilder sb = new StringBuilder(
+				"Passwords must consist only of printable ASCII characters, excluding whitespace, ");
+
+		final List<Character> prohibitedChars = Arrays.asList(PROHIBITED_CHARS);
+		int i = 0;
+		for (final Character prohibitedChar : prohibitedChars) {
+			sb.append(prohibitedChar);
+			if (i < (prohibitedChars.size() - 1)) {
+				sb.append(", ");
+			}
+			i++;
+		}
+		sb.append(". ");
+		sb.append("Passwords must have a minimum length of 1 and a maximum length of 64.");
+		return sb.toString();
 	}
 }
