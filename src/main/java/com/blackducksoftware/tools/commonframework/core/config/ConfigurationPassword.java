@@ -22,8 +22,6 @@
  *******************************************************************************/
 package com.blackducksoftware.tools.commonframework.core.config;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -54,7 +52,7 @@ public class ConfigurationPassword {
 	private Properties props;
 	private PasswordMetaProperties passwordMetaProperties;
 	private final String propertyName;
-	private final List<Character> manuallyUnescapedChars = Arrays.asList(Password.MANUALLY_UNESCAPED_CHARS);
+
 
 	/**
 	 * This enum describes the state of the password as found in the config
@@ -248,18 +246,6 @@ public class ConfigurationPassword {
 		init(props);
 	}
 
-	private String unescape(String s, final List<Character> charsToUnEscape) {
-		final StringBuilder sb = new StringBuilder("\\x");
-
-		for (final Character c : charsToUnEscape) {
-			sb.setCharAt(1, c);
-			final String target = sb.toString();
-			final String replacement = String.valueOf(c);
-			s = s.replace(target, replacement);
-		}
-		return s;
-	}
-
 	private void init(final Properties props) {
 		this.props = props;
 		final String passwordPropertyValue = props.getProperty(propertyName);
@@ -272,10 +258,9 @@ public class ConfigurationPassword {
 		switch (passwordMetaProperties) {
 		case ENCRYPTED_TRUE:
 			// Encrypted+Ascii85-encoded
-			final String unescapedPasswordPropertyValue = unescape(passwordPropertyValue, manuallyUnescapedChars);
 			try {
 				passwordInPlainText = Password
-						.decodeDecrypt(unescapedPasswordPropertyValue);
+.decodeDecrypt(passwordPropertyValue);
 			} catch (final Exception e) {
 				throw new IllegalArgumentException(
 						"Error attempting to decode/decrypt password set in "

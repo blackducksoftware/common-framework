@@ -89,10 +89,6 @@ public class Password {
 	public static final Character[] PROHIBITED_CHARS = { '#', ':', '!', '\\',
 		'=', '|', '[', '{', '(' };
 
-	public static final Character[] ESCAPED_CHARS = { '\\', '(', '[', '$' };
-
-	public static final Character[] MANUALLY_UNESCAPED_CHARS = { '(', '[', '$' };
-
 	// Encryption algorithm details
 	private static final String ENCRYPTION_ALGORITHM = "DES";
 

@@ -202,7 +202,9 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 */
 	private void loadPropertiesFromFile(final String configFileLocation) {
 		configFile = new ConfigurationFile(configFileLocation);
-		configFile.copyTo(props);
+		props = configFile.getProperties();
+		// configFile.copyTo(props); // TODO this unescapes again, damaging some
+		// text
 		configFile.saveWithEncryptedPasswords();
 	}
 

@@ -66,14 +66,14 @@ public class ConfigurationFileTest {
 	}
 
 	@Test
-	public void testSimplePassword() throws Exception {
+	public void testNewBlackDuckPassword() throws Exception {
 		final File configFile = File.createTempFile("soleng_framework_core_config_ConfigurationFileTest",
 				"testConfigFileRoundTrip");
 		filesToDelete.add(configFile);
 		configFile.deleteOnExit();
 
 		final Properties props = new Properties();
-		final String psw = "abc";
+		final String psw = "blackduck";
 		System.out.println("psw: " + psw);
 		props.setProperty("protex.server.name", "servername");
 		props.setProperty("protex.user.name", "username");
@@ -93,7 +93,7 @@ public class ConfigurationFileTest {
 	}
 
 	@Test
-	public void testDollarSignPassword() throws Exception {
+	public void testSpecialCharsInNewEncryptedEncodedPassword() throws Exception {
 		final File configFile = File.createTempFile("soleng_framework_core_config_ConfigurationFileTest",
 				"testConfigFileRoundTrip");
 		filesToDelete.add(configFile);
@@ -101,6 +101,73 @@ public class ConfigurationFileTest {
 
 		final Properties props = new Properties();
 		final String psw = "P@_H~o$t&h4DSSO%.-J'_'W_ZY2X<QHxtz&Cg'+.g7.s49;8K2MFK~2Ar7]xp/g";
+		System.out.println("psw: " + psw);
+		props.setProperty("protex.server.name", "servername");
+		props.setProperty("protex.user.name", "username");
+		props.setProperty("protex.password", psw);
+
+		// Write the config file with plain txt password
+		configFile.delete();
+		props.store(new FileOutputStream(configFile), "test");
+
+		// First use will encrypt password
+		ConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+
+		// Second use will read encrypted password
+		config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+	}
+
+	@Test
+	public void testLegacyFile() throws Exception {
+		final File configFile = new File("src/test/resources/appedit.properties");
+		final TestProtexConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals("blackduck", config.getServerBean(APPLICATION.CODECENTER).getPassword());
+		assertEquals("(a test\\)", config.getServerBean(APPLICATION.PROTEX).getPassword());
+		assertEquals("\\[A-Za-z0-9@_.-\\]+", config.getFieldInputValidationRegexUsername());
+		assertEquals("\\(a test\\)", config.getProperty("unescape.test"));
+		assertEquals("\\(a test\\)", config.getUnEscapeTestValue());
+	}
+
+	@Test
+	public void testEqualsSignInEncryptedEncodedPassword() throws Exception {
+		final File configFile = File.createTempFile("soleng_framework_core_config_ConfigurationFileTest",
+				"testConfigFileRoundTrip");
+		filesToDelete.add(configFile);
+		configFile.deleteOnExit();
+
+		final Properties props = new Properties();
+		// This password has = once encrypted/encoded
+		final String psw = "~h%WCT5GTe}_VY}BLV9kPdRyq0UMu1~I6.*D);yggLJ},j4Ww5w'2usNB?%I}F";
+		System.out.println("psw: " + psw);
+		props.setProperty("protex.server.name", "servername");
+		props.setProperty("protex.user.name", "username");
+		props.setProperty("protex.password", psw);
+
+		// Write the config file with plain txt password
+		configFile.delete();
+		props.store(new FileOutputStream(configFile), "test");
+
+		// First use will encrypt password
+		ConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+
+		// Second use will read encrypted password
+		config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
+		assertEquals(psw, config.getServerBean(APPLICATION.PROTEX).getPassword());
+	}
+
+	@Test
+	public void testCloseSquareBracketInEncryptedEncodedPassword() throws Exception {
+		final File configFile = File.createTempFile("soleng_framework_core_config_ConfigurationFileTest",
+				"testConfigFileRoundTrip");
+		filesToDelete.add(configFile);
+		configFile.deleteOnExit();
+
+		final Properties props = new Properties();
+		// This password has = once encrypted/encoded
+		final String psw = "].}7]\"9-4>m4SLootB^Kk?E@~kk7^e83";
 		System.out.println("psw: " + psw);
 		props.setProperty("protex.server.name", "servername");
 		props.setProperty("protex.user.name", "username");

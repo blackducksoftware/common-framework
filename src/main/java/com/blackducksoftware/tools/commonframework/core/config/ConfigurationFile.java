@@ -25,7 +25,6 @@ package com.blackducksoftware.tools.commonframework.core.config;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +32,6 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.blackducksoftware.tools.commonframework.core.encryption.Password;
 
 /**
  * This class manages a configuration file. It can load the config file into a
@@ -120,7 +117,7 @@ public class ConfigurationFile {
 			+ "."
 			+ ConfigConstants.PASSWORD_ISPLAINTEXT_SUFFIX + "=.*";
 
-	private final List<Character> escapedChars;
+
 
 	// TODO: Use Pattern and Matcher
 	// private Pattern passwordLinePattern =
@@ -168,7 +165,7 @@ public class ConfigurationFile {
 		}
 		configurationPasswords = loadConfigurationPasswords();
 		inNeedOfUpdate = hasPasswordsNeedingEncryptionOrPropertyUpdate();
-		escapedChars = Arrays.asList(Password.ESCAPED_CHARS);
+
 	}
 
 	/**
@@ -176,8 +173,13 @@ public class ConfigurationFile {
 	 *
 	 * @param targetProps
 	 */
+	// TODO very much want to kill this
 	public void copyTo(final EProperties targetProps) {
 		targetProps.addAll(props.getProperties());
+	}
+
+	public EProperties getProperties() {
+		return props;
 	}
 
 	/**
@@ -199,14 +201,14 @@ public class ConfigurationFile {
 				// of the property name?
 				// IF the psw lazy-loaded, then it wouldn't matter so much
 				final ConfigurationPassword psw = ConfigurationPassword
-.createFromLine(props.getProperties(), line);
+						.createFromLine(props.getProperties(), line);
 				if (psw.isInNeedOfEncryption()) {
 					String encryptedLine = null;
 					try {
 						// In file, backslashes must be escaped (with a
 						// backslash)
 						encryptedLine = psw.getPropertyName() + "="
-								+ escape(psw.getEncrypted(), escapedChars);
+								+ EProperties.escape(psw.getEncrypted());
 					} catch (final Exception e) {
 						log.error("Error encrypting passwords in file: "
 								+ file.getAbsolutePath() + ": "
@@ -233,28 +235,7 @@ public class ConfigurationFile {
 		return updatedLines;
 	}
 
-	/**
-	 * Escape the given string, escaping any backslash characters with another
-	 * backslash
-	 *
-	 * @param s
-	 * @return
-	 */
-	private String escape(final String s, final List<Character> escapedChars) {
-		final byte[] bufferIn = s.getBytes();
-		final StringBuilder sb = new StringBuilder();
-		for (int bufferInIndex = 0; bufferInIndex < bufferIn.length; bufferInIndex++) {
 
-			final Character c = new Character(s.charAt(bufferInIndex));
-			if (escapedChars.contains(c)) {
-				sb.append('\\');
-			}
-			sb.append(c);
-		}
-
-		final String escapedString = sb.toString();
-		return escapedString;
-	}
 
 	/**
 	 * Save the file, encrypting passwords that need it. Does not change the
@@ -326,7 +307,7 @@ public class ConfigurationFile {
 			if (isPasswordLine(line)) {
 				// This is a *.password= line; does it need encrypting?
 				final ConfigurationPassword psw = ConfigurationPassword
-.createFromLine(props.getProperties(), line);
+						.createFromLine(props.getProperties(), line);
 				configurationPasswords.put(psw.getPropertyName(), psw);
 			}
 		}

@@ -28,7 +28,6 @@ import java.util.Properties;
 import com.blackducksoftware.tools.commonframework.core.config.ConfigurationManager;
 import com.blackducksoftware.tools.commonframework.core.config.user.CommonUser;
 
-// TODO: Auto-generated Javadoc
 /**
  * Extended test config class for testing purposes only. Since we cannot test an
  * abstract class, we will test its inherited class.
@@ -39,6 +38,9 @@ import com.blackducksoftware.tools.commonframework.core.config.user.CommonUser;
  *
  */
 public class TestProtexConfigurationManager extends ConfigurationManager {
+	private static final String FIELD_INPUT_VALIDATION_REGEX_USERNAME_PROPERTY = "field.input.validation.regex.username";
+	private String fieldInputValidationRegexUsername;
+	private String unEscapeTestValue;
 
 	/**
 	 * Instantiates a new test protex configuration manager.
@@ -48,6 +50,7 @@ public class TestProtexConfigurationManager extends ConfigurationManager {
 	 */
 	public TestProtexConfigurationManager(final String configFileLocation) {
 		super(configFileLocation);
+		init();
 	}
 
 	/**
@@ -58,6 +61,7 @@ public class TestProtexConfigurationManager extends ConfigurationManager {
 	 */
 	public TestProtexConfigurationManager(final CommonUser user) {
 		super(user, APPLICATION.PROTEX);
+		init();
 	}
 
 	/**
@@ -68,6 +72,7 @@ public class TestProtexConfigurationManager extends ConfigurationManager {
 	 */
 	public TestProtexConfigurationManager(final InputStream is) {
 		super(is, APPLICATION.PROTEX);
+		init();
 	}
 
 	/**
@@ -78,6 +83,20 @@ public class TestProtexConfigurationManager extends ConfigurationManager {
 	 */
 	public TestProtexConfigurationManager(final Properties props) {
 		super(props, APPLICATION.PROTEX);
+		init();
+	}
+
+	private void init() {
+		fieldInputValidationRegexUsername = getOptionalProperty(FIELD_INPUT_VALIDATION_REGEX_USERNAME_PROPERTY);
+		unEscapeTestValue = getOptionalProperty("unescape.test");
+	}
+
+	public String getFieldInputValidationRegexUsername() {
+		return fieldInputValidationRegexUsername;
+	}
+
+	public String getUnEscapeTestValue() {
+		return unEscapeTestValue;
 	}
 
 	@Override
