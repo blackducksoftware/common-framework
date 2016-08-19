@@ -124,10 +124,10 @@ public class ConfigurationFileTest {
 		final File configFile = new File("src/test/resources/appedit.properties");
 		final TestProtexConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
 		assertEquals("blackduck", config.getServerBean(APPLICATION.CODECENTER).getPassword());
-		assertEquals("(a test\\)", config.getServerBean(APPLICATION.PROTEX).getPassword());
-		assertEquals("[A-Za-z0-9@_.-\\]+", config.getFieldInputValidationRegexUsername());
-		assertEquals("(a test\\)", config.getProperty("unescape.test"));
-		assertEquals("(a test\\)", config.getUnEscapeTestValue());
+		assertEquals("(a test)", config.getServerBean(APPLICATION.PROTEX).getPassword());
+		assertEquals("[A-Za-z0-9@_.-]+", config.getFieldInputValidationRegexUsername());
+		assertEquals("(a test)", config.getProperty("unescape.test"));
+		assertEquals("(a test)", config.getUnEscapeTestValue());
 	}
 
 	@Test

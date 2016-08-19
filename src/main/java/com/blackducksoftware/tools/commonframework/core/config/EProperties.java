@@ -21,11 +21,11 @@ public class EProperties {
 
 	// When we write property values to a config file,
 	// we are responsible for escaping these characters
-	private static final Character[] CHARACTERS_TO_ESCAPE = { '\\', '(', '[', '$', '=' };
+	private static final Character[] CHARACTERS_TO_ESCAPE = { '\\', '(', '[', '$', '=', ']', ')' };
 
 	// When we read property values from a file,
 	// we must unescape these characters
-	private final Character[] CHARACTERS_TO_UNESCAPE = { '(', '[', '$', '=' };
+	private final Character[] CHARACTERS_TO_UNESCAPE = { '(', '[', '$', '=', ']', ')' };
 
 	private final static List<Character> charsToEscape = Arrays.asList(CHARACTERS_TO_ESCAPE);
 	private final List<Character> charsToUnEscape = Arrays.asList(CHARACTERS_TO_UNESCAPE);
