@@ -161,6 +161,9 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Instantiates a new configuration manager.
 	 *
+	 * This constructor should be used only by tests, since it introduces some
+	 * risk of incorrect handling of special characters and escaped characters.
+	 *
 	 * @param props
 	 *            the props
 	 * @param applicationType
@@ -177,10 +180,10 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 * classpath is not obvious (web context).
 	 *
 	 * Deprecated: Use ConfigrationManger(File file) instead. The underlying
-	 * library (Apache Commons Configuration) cannot load from an InputStream,
-	 * so this constructor introduces extra processing of property values as
-	 * they are read, and therefore a slight risk of inconsistent handling of
-	 * escaped characters.
+	 * properties library (Apache Commons Configuration) cannot load from an
+	 * InputStream, so this constructor introduces extra processing of property
+	 * values as they are read, and therefore a slight risk of inconsistent
+	 * handling of escaped characters.
 	 *
 	 * @param is
 	 *            the is

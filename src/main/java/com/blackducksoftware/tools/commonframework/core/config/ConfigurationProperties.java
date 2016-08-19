@@ -104,7 +104,16 @@ public class ConfigurationProperties {
 		return escapedString;
 	}
 
-	// TODO can I kill this?
+	/**
+	 * Add the given Properties to this config object.
+	 *
+	 * This method is not completely safe... Probably fine to use in tests, but
+	 * it's safer for production code to use load(File). Reason: This method
+	 * introduces extra processing of property values and corresponding the risk
+	 * of inconsistent handling of special characters and escaped characters.
+	 *
+	 * @param sourceProps
+	 */
 	public void addAll(final Properties sourceProps) {
 		propertiesObject = null;
 
