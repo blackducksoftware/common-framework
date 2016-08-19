@@ -125,9 +125,9 @@ public class ConfigurationFileTest {
 		final TestProtexConfigurationManager config = new TestProtexConfigurationManager(configFile.getAbsolutePath());
 		assertEquals("blackduck", config.getServerBean(APPLICATION.CODECENTER).getPassword());
 		assertEquals("(a test\\)", config.getServerBean(APPLICATION.PROTEX).getPassword());
-		assertEquals("\\[A-Za-z0-9@_.-\\]+", config.getFieldInputValidationRegexUsername());
-		assertEquals("\\(a test\\)", config.getProperty("unescape.test"));
-		assertEquals("\\(a test\\)", config.getUnEscapeTestValue());
+		assertEquals("[A-Za-z0-9@_.-\\]+", config.getFieldInputValidationRegexUsername());
+		assertEquals("(a test\\)", config.getProperty("unescape.test"));
+		assertEquals("(a test\\)", config.getUnEscapeTestValue());
 	}
 
 	@Test

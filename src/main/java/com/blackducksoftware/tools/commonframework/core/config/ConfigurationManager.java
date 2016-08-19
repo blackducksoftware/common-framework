@@ -455,7 +455,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		String value = null;
 
 		if (props.containsKey(propertyKey)) {
-			value = props.get(propertyKey);
+			value = props.getProperty(propertyKey);
 			value = value.trim();
 			if (value == null || value.length() == 0) {
 				throw new IllegalArgumentException("Value DNE for key: " + propertyKey);
@@ -497,7 +497,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 		String value = null;
 
 		if (props.containsKey(propertyKey)) {
-			value = props.get(propertyKey);
+			value = props.getProperty(propertyKey);
 			value = value.trim();
 		}
 

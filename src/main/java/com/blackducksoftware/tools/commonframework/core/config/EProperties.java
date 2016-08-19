@@ -126,12 +126,8 @@ public class EProperties {
 		return config.containsKey(key);
 	}
 
-	public String get(final String key) {
-		return config.getString(key);
-	}
-
 	public String getProperty(final String key) {
-		return config.getString(key);
+		return getProperties().getProperty(key);
 	}
 
 	public Set<Object> keySet() {
