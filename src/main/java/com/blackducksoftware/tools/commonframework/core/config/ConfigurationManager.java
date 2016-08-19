@@ -94,7 +94,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	private final Map<String, String> mappings = new HashMap<String, String>();
 
 	/** The props. */
-	private EProperties props = new EProperties();
+	private ConfigurationProperties props = new ConfigurationProperties();
 
 	// IF the config is read from a file, the following two props
 	// will be set, and the file may be modified, encrypting
@@ -161,7 +161,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 *            the application type {@link ConfigConstants.APPLICATION}
 	 */
 	protected ConfigurationManager(final Properties props, final APPLICATION applicationName) {
-		this.props = new EProperties(); // start clean just in case
+		this.props = new ConfigurationProperties(); // start clean just in case
 		this.props.addAll(props);
 		init();
 	}

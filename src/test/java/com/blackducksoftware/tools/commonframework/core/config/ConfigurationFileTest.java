@@ -225,8 +225,7 @@ public class ConfigurationFileTest {
 	public void testPropsLoading() {
 		final ConfigurationFile configFile = new ConfigurationFile(
 				"src/test/resources/psw_encryption/legacy_plain_notset.properties");
-		final EProperties props = new EProperties();
-		configFile.copyTo(props);
+		final ConfigurationProperties props = configFile.getProperties();
 
 		assertEquals(18, props.size());
 		assertEquals("connector_password",

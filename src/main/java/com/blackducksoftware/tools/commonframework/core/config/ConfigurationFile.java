@@ -92,16 +92,17 @@ public class ConfigurationFile {
 	private final Logger log = LoggerFactory.getLogger(this.getClass()
 			.getName());
 
-	private final File file;
+	private File file;
 
 	private boolean inNeedOfUpdate = false; // are there any passwords that need
 	// to be encrypted?
 
 	private List<String> lines; // The original file contents
 
-	private final EProperties props; // The original properties from the file
+	private ConfigurationProperties props; // The original properties from the
+	// file
 
-	private final Map<String, ConfigurationPassword> configurationPasswords; // a list
+	private Map<String, ConfigurationPassword> configurationPasswords; // a list
 	// of
 	// passwords
 	// that
@@ -132,20 +133,29 @@ public class ConfigurationFile {
 	 */
 	public ConfigurationFile(final String configFilePath) {
 		file = new File(configFilePath);
+		init(file);
+	}
+
+	public ConfigurationFile(final File file) {
+		init(file);
+	}
+
+	public void init(final File file) {
+		this.file = file;
 		if (!file.exists()) {
-			final String msg = "Configuration file: " + configFilePath
+			final String msg = "Configuration file: " + file.getAbsolutePath()
 					+ " does not exist";
 			log.error(msg);
 			// A ConfigurationManager test depends on this message:
-			throw new IllegalArgumentException("File DNE @: " + configFilePath);
+			throw new IllegalArgumentException("File DNE @: " + file.getName());
 		}
 		if (!file.canRead()) {
-			final String msg = "Configuration file: " + configFilePath
+			final String msg = "Configuration file: " + file.getAbsolutePath()
 					+ " is not readable";
 			log.error(msg);
 			throw new IllegalArgumentException(msg);
 		}
-		props = new EProperties();
+		props = new ConfigurationProperties();
 		try {
 			props.load(file);
 		} catch (final Exception e) {
@@ -168,17 +178,7 @@ public class ConfigurationFile {
 
 	}
 
-	/**
-	 * Load the config file's properties into the given EProperties object.
-	 *
-	 * @param targetProps
-	 */
-	// TODO very much want to kill this
-	public void copyTo(final EProperties targetProps) {
-		targetProps.addAll(props.getProperties());
-	}
-
-	public EProperties getProperties() {
+	public ConfigurationProperties getProperties() {
 		return props;
 	}
 
@@ -208,7 +208,7 @@ public class ConfigurationFile {
 						// In file, backslashes must be escaped (with a
 						// backslash)
 						encryptedLine = psw.getPropertyName() + "="
-								+ EProperties.escape(psw.getEncrypted());
+								+ ConfigurationProperties.escape(psw.getEncrypted());
 					} catch (final Exception e) {
 						log.error("Error encrypting passwords in file: "
 								+ file.getAbsolutePath() + ": "

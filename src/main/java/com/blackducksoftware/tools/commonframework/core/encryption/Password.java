@@ -160,7 +160,7 @@ public class Password {
 		final byte[] encryptedPasswordAscii = Ascii85Encoder
 				.encode(encryptedPasswordBinary); // encode binary to ascii
 		encryptedPassword = new String(encryptedPasswordAscii, UTF8).trim();
-		logger.info("Final encrypted/encoded psw: " + encryptedPassword);
+		logger.debug("Final encrypted/encoded psw: " + encryptedPassword);
 		return encryptedPassword;
 	}
 
@@ -255,7 +255,7 @@ public class Password {
 			throw new IllegalArgumentException(
 					"The password to decrypt is empty or null");
 		}
-		logger.info("decodeDecrypt(): encryptedPassword: '" + encryptedPassword + "'");
+		logger.debug("decodeDecrypt(): encryptedPassword: '" + encryptedPassword + "'");
 		final byte[] encryptedPasswordAsciiBytes = encryptedPassword.getBytes(UTF8); // convert
 		// from
 		// String

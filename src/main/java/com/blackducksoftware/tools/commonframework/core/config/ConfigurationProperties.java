@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.tools.commonframework.core.exception.CommonFrameworkException;
 
-public class EProperties {
-	private final static Logger logger = LoggerFactory.getLogger(EProperties.class.getName());
+public class ConfigurationProperties {
+	private final static Logger logger = LoggerFactory.getLogger(ConfigurationProperties.class.getName());
 
 	// When we write property values to a config file,
 	// we are responsible for escaping these characters
@@ -30,10 +30,9 @@ public class EProperties {
 	private final static List<Character> charsToEscape = Arrays.asList(CHARACTERS_TO_ESCAPE);
 	private final List<Character> charsToUnEscape = Arrays.asList(CHARACTERS_TO_UNESCAPE);
 	private Configuration config = new PropertiesConfiguration();
-	private Properties propertiesObject; // lazily-generated
+	private Properties propertiesObject;
 
-	public EProperties() {
-		logger.info("EProperties() constructor");
+	public ConfigurationProperties() {
 	}
 
 	public void load(final File file) throws CommonFrameworkException {
@@ -50,7 +49,7 @@ public class EProperties {
 	}
 
 	private String unescape(String s) {
-		logger.info("Before unescaping: " + s);
+		logger.debug("Before unescaping: " + s);
 		final StringBuilder sb = new StringBuilder("\\x");
 		for (final Character c : charsToUnEscape) {
 			sb.setCharAt(1, c);
@@ -59,7 +58,7 @@ public class EProperties {
 
 			s = s.replace(target, replacement);
 		}
-		logger.info("After unescaping: " + s);
+		logger.debug("After unescaping: " + s);
 		return s;
 	}
 
@@ -75,7 +74,7 @@ public class EProperties {
 		while (iter.hasNext()) {
 			final String key = iter.next();
 			final String unEscapedValue = unescape(config.getString(key));
-			logger.info("getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue);
+			logger.debug("getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue);
 			propertiesObject.put(key, unEscapedValue);
 		}
 		return propertiesObject;
@@ -95,7 +94,7 @@ public class EProperties {
 
 			final Character c = new Character(s.charAt(bufferInIndex));
 			if (charsToEscape.contains(c)) {
-				logger.info("Escaping: " + c);
+				logger.debug("Escaping: " + c);
 				sb.append('\\');
 			}
 			sb.append(c);
@@ -111,7 +110,7 @@ public class EProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
-			logger.info("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
+			logger.debug("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
 			config.addProperty(key, sourceProps.getProperty(key));
 		}
 		getProperties();
