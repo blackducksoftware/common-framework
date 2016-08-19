@@ -137,7 +137,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	protected ConfigurationManager(final String configFileLocation, final APPLICATION applicationName) {
 		this.configFileLocation = configFileLocation;
 		loadPropertiesFromFile(configFileLocation);
-		init();
+		initApplication();
 	}
 
 	/**
@@ -149,7 +149,13 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	protected ConfigurationManager(final String configFileLocation) {
 		this.configFileLocation = configFileLocation;
 		loadPropertiesFromFile(configFileLocation);
-		init();
+		initApplication();
+	}
+
+	protected ConfigurationManager(final File configFile) {
+		this.configFileLocation = configFile.getAbsolutePath();
+		loadPropertiesFromFile(configFile);
+		initApplication();
 	}
 
 	/**
@@ -163,21 +169,28 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	protected ConfigurationManager(final Properties props, final APPLICATION applicationName) {
 		this.props = new ConfigurationProperties(); // start clean just in case
 		this.props.addAll(props);
-		init();
+		initApplication();
 	}
 
 	/**
 	 * Initializer for stream instead of specific file Used when file's
 	 * classpath is not obvious (web context).
 	 *
+	 * Deprecated: Use ConfigrationManger(File file) instead. The underlying
+	 * library (Apache Commons Configuration) cannot load from an InputStream,
+	 * so this constructor introduces extra processing of property values as
+	 * they are read, and therefore a slight risk of inconsistent handling of
+	 * escaped characters.
+	 *
 	 * @param is
 	 *            the is
 	 * @param applicationType
 	 *            the application type {@link ConfigConstants.APPLICATION}
 	 */
+	@Deprecated
 	protected ConfigurationManager(final InputStream is, final APPLICATION applicationName) {
 		loadPropertiesFromStream(is);
-		init();
+		initApplication();
 	}
 
 	/**
@@ -189,7 +202,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 */
 	protected ConfigurationManager(final CommonUser user, final APPLICATION applicationName) {
 		this.user = user;
-		init();
+		initApplication();
 	}
 
 	/**
@@ -202,9 +215,16 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	 */
 	private void loadPropertiesFromFile(final String configFileLocation) {
 		configFile = new ConfigurationFile(configFileLocation);
-		props = configFile.getProperties();
-		// configFile.copyTo(props); // TODO this unescapes again, damaging some
-		// text
+		initProperties();
+	}
+
+	private void loadPropertiesFromFile(final File configFile) {
+		this.configFile = new ConfigurationFile(configFile);
+		initProperties();
+	}
+
+	private void initProperties() {
+		props = this.configFile.getProperties();
 		configFile.saveWithEncryptedPasswords();
 	}
 
@@ -228,7 +248,7 @@ public abstract class ConfigurationManager extends ConfigConstants implements IC
 	/**
 	 * Initializes all the properties depending on APPLICATION name
 	 */
-	private void init() {
+	private void initApplication() {
 		initCommonProperties();
 		final boolean processedList = processServerListConfiguration();
 

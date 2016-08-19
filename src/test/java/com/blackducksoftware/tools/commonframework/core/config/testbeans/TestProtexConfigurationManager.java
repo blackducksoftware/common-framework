@@ -22,6 +22,7 @@
  *******************************************************************************/
 package com.blackducksoftware.tools.commonframework.core.config.testbeans;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -50,6 +51,11 @@ public class TestProtexConfigurationManager extends ConfigurationManager {
 	 */
 	public TestProtexConfigurationManager(final String configFileLocation) {
 		super(configFileLocation);
+		init();
+	}
+
+	public TestProtexConfigurationManager(final File configFile) {
+		super(configFile);
 		init();
 	}
 
