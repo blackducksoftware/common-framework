@@ -128,6 +128,7 @@ public class ConfigurationFileTest {
 		assertEquals("[A-Za-z0-9@_.-]+", config.getFieldInputValidationRegexUsername());
 		assertEquals("(a test)", config.getProperty("unescape.test"));
 		assertEquals("(a test)", config.getUnEscapeTestValue());
+		assertEquals("(this is in unescaped parens)", config.getProperty("paren.test"));
 	}
 
 	@Test
