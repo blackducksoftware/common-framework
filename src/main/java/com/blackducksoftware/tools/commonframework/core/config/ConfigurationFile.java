@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -94,21 +96,17 @@ public class ConfigurationFile {
 
 	private File file;
 
-	private boolean inNeedOfUpdate = false; // are there any passwords that need
-	// to be encrypted?
+	// are there any passwords that need to be encrypted?
+	private boolean inNeedOfUpdate = false;
 
-	private List<String> lines; // The original file contents
+	// The original file contents
+	private List<String> lines;
 
-	private ConfigurationProperties props; // The original properties from the
-	// file
+	// The original properties from the file
+	private ConfigurationProperties props;
 
-	private Map<String, ConfigurationPassword> configurationPasswords; // a list
-	// of
-	// passwords
-	// that
-	// appear
-	// in the
-	// file
+	// a list of passwords that appear in the file
+	private Map<String, ConfigurationPassword> configurationPasswords;
 
 	private static final String PASSWORD_LINE_PATTERN_STRING = "^[a-zA-Z_\\-0-9.]*\\."
 			+ ConfigConstants.GENERIC_PASSWORD_PROPERTY_SUFFIX + "=.*";
@@ -118,11 +116,9 @@ public class ConfigurationFile {
 			+ "."
 			+ ConfigConstants.PASSWORD_ISPLAINTEXT_SUFFIX + "=.*";
 
-
-
-	// TODO: Use Pattern and Matcher
-	// private Pattern passwordLinePattern =
-	// Pattern.compile(PASSWORD_LINE_PATTERN_STRING);
+	private static final Pattern passwordLinePattern = Pattern.compile(PASSWORD_LINE_PATTERN_STRING);
+	private static final Pattern passwordIsPlainTextLinePattern = Pattern
+			.compile(PASSWORD_ISPLAINTEXT_LINE_PATTERN_STRING);
 
 	/**
 	 * Construct a new ConfigurationFile given the file path. Load up a
@@ -288,11 +284,13 @@ public class ConfigurationFile {
 	 * @return
 	 */
 	private boolean isPasswordLine(final String line) {
-		return line.matches(PASSWORD_LINE_PATTERN_STRING);
+		final Matcher matcher = passwordLinePattern.matcher(line);
+		return matcher.matches();
 	}
 
 	private boolean isPasswordIsPlainTextLine(final String line) {
-		return line.matches(PASSWORD_ISPLAINTEXT_LINE_PATTERN_STRING);
+		final Matcher matcher = passwordIsPlainTextLinePattern.matcher(line);
+		return matcher.matches();
 	}
 
 	/**
