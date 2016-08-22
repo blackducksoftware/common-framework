@@ -401,6 +401,8 @@ public class ConfigurationManagerTest {
 				configByIs.getProperty("dollar.test"));
 		assertEquals("=", configByFile.getProperty("equals.test"), configByPath.getProperty("equals.test"),
 				configByIs.getProperty("equals.test"));
+		assertEquals("([=$])", configByFile.getProperty("without.escape.test"),
+				configByPath.getProperty("without.escape.test"), configByIs.getProperty("without.escape.test"));
 	}
 
 	private void assertEquals(final String s1, final String s2, final String s3, final String s4) {
