@@ -73,6 +73,12 @@ public class ConfigurationProperties {
 		final Iterator<String> iter = config.getKeys();
 		while (iter.hasNext()) {
 			final String key = iter.next();
+			if (key.equals("cc.password")){
+				final String unEscapedValue = unescape(config.getString(key));
+				logger.debug("getProperties(): including: " + key + "=" + "******");
+				propertiesObject.put(key, unEscapedValue);
+				continue;
+			}
 			final String unEscapedValue = unescape(config.getString(key));
 			logger.debug("getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue);
 			propertiesObject.put(key, unEscapedValue);
@@ -119,6 +125,11 @@ public class ConfigurationProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
+			if (key.equals("cc.password")){
+				logger.debug("addAll(): adding: " + key + "=" + "******");
+				config.addProperty(key, sourceProps.getProperty(key));
+				continue;
+			}
 			logger.debug("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
 			config.addProperty(key, sourceProps.getProperty(key));
 		}
