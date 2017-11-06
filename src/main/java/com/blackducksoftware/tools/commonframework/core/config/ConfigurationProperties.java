@@ -61,6 +61,13 @@ public class ConfigurationProperties {
 		logger.debug("After unescaping: " + s);
 		return s;
 	}
+	
+	private String obscurePassword(String key, String value){
+		if (key.endsWith(".password")){
+			return "********";
+		}
+		return value;
+	}
 
 	public Properties getProperties() {
 		if (config == null) {
@@ -74,13 +81,7 @@ public class ConfigurationProperties {
 		while (iter.hasNext()) {
 			final String key = iter.next();
 			final String unEscapedValue = unescape(config.getString(key));
-			String debugMessage = null;
-			if (key.endsWith(".password")){
-				debugMessage = "getProperties(): including: " + key + "=" + "******";
-			} else {
-				debugMessage = "getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue;
-			}
-			logger.debug(debugMessage);
+			logger.debug("getProperties(): including: " + key + "=" + obscurePassword(key, config.getString(key) + " --> " + unEscapedValue));
 			propertiesObject.put(key, unEscapedValue);
 		}
 		return propertiesObject;
@@ -125,13 +126,7 @@ public class ConfigurationProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
-			String debugMessage = null;
-			if (key.endsWith(".password")){
-				debugMessage = "addAll(): adding: " + key + "=" + "******";
-			} else {
-				debugMessage = "addAll(): adding: " + key + "=" + sourceProps.getProperty(key);
-			}
-			logger.debug(debugMessage);
+			logger.debug("addAll(): adding: " + key + "=" + obscurePassword(key, sourceProps.getProperty(key)));
 			config.addProperty(key, sourceProps.getProperty(key));
 		}
 		getProperties();
