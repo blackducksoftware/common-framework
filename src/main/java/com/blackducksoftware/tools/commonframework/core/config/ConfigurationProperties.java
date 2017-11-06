@@ -48,8 +48,8 @@ public class ConfigurationProperties {
 		getProperties();
 	}
 
-	private String unescape(String s) {
-		logger.debug("Before unescaping: " + s);
+	private String unescape(String key, String s) {
+		logger.debug("Before unescaping: " + obscurePassword(key, s));
 		final StringBuilder sb = new StringBuilder("\\x");
 		for (final Character c : charsToUnEscape) {
 			sb.setCharAt(1, c);
@@ -58,7 +58,7 @@ public class ConfigurationProperties {
 
 			s = s.replace(target, replacement);
 		}
-		logger.debug("After unescaping: " + s);
+		logger.debug("After unescaping: " + obscurePassword(key, s));
 		return s;
 	}
 	
@@ -80,7 +80,7 @@ public class ConfigurationProperties {
 		final Iterator<String> iter = config.getKeys();
 		while (iter.hasNext()) {
 			final String key = iter.next();
-			final String unEscapedValue = unescape(config.getString(key));
+			final String unEscapedValue = unescape(key, config.getString(key));
 			logger.debug("getProperties(): including: " + key + "=" + obscurePassword(key, config.getString(key) + " --> " + unEscapedValue));
 			propertiesObject.put(key, unEscapedValue);
 		}
