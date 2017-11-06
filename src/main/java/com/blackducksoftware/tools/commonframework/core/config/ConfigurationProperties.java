@@ -73,14 +73,14 @@ public class ConfigurationProperties {
 		final Iterator<String> iter = config.getKeys();
 		while (iter.hasNext()) {
 			final String key = iter.next();
-			if (key.equals("cc.password")){
-				final String unEscapedValue = unescape(config.getString(key));
-				logger.debug("getProperties(): including: " + key + "=" + "******");
-				propertiesObject.put(key, unEscapedValue);
-				continue;
-			}
 			final String unEscapedValue = unescape(config.getString(key));
-			logger.debug("getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue);
+			String debugMessage = null;
+			if (key.endsWith(".password")){
+				debugMessage = "getProperties(): including: " + key + "=" + "******";
+			} else {
+				debugMessage = "getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue;
+			}
+			logger.debug(debugMessage);
 			propertiesObject.put(key, unEscapedValue);
 		}
 		return propertiesObject;
@@ -125,12 +125,13 @@ public class ConfigurationProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
-			if (key.equals("cc.password")){
-				logger.debug("addAll(): adding: " + key + "=" + "******");
-				config.addProperty(key, sourceProps.getProperty(key));
-				continue;
+			String debugMessage = null;
+			if (key.endsWith(".password")){
+				debugMessage = "addAll(): adding: " + key + "=" + "******";
+			} else {
+				debugMessage = "addAll(): adding: " + key + "=" + sourceProps.getProperty(key);
 			}
-			logger.debug("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
+			logger.debug(debugMessage);
 			config.addProperty(key, sourceProps.getProperty(key));
 		}
 		getProperties();
