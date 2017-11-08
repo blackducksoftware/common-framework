@@ -11,7 +11,7 @@
 
   <groupId>com.blackducksoftware.tools</groupId>
   <artifactId>common-framework</artifactId>
-  <version>1.6.7</version>
+  <version>1.6.8-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>CommonFramework</name>
@@ -22,12 +22,12 @@
 		repo -->
   <distributionManagement>
     <repository>
-      <id>bds-int-public</id>
-      <url>https://updates.suite.blackducksoftware.com/integrations</url>
+      <id>ha-bds-artifactory</id>
+      <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-release/</url>
     </repository>
     <snapshotRepository>
-      <id>bds-int-public</id>
-      <url>https://updates.suite.blackducksoftware.com/integrations</url>
+      <id>ha-bds-artifactory</id>
+      <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-snapshot/</url>
     </snapshotRepository>
   </distributionManagement>
 
