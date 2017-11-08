@@ -71,8 +71,8 @@ public class ConfigurationProperties {
 		getProperties();
 	}
 
-	private String unescape(String s) {
-		logger.debug("Before unescaping: " + s);
+	private String unescape(String key, String s) {
+		logger.debug("Before unescaping: " + obscurePassword(key, s));
 		final StringBuilder sb = new StringBuilder("\\x");
 		for (final Character c : charsToUnEscape) {
 			sb.setCharAt(1, c);
@@ -81,8 +81,15 @@ public class ConfigurationProperties {
 
 			s = s.replace(target, replacement);
 		}
-		logger.debug("After unescaping: " + s);
+		logger.debug("After unescaping: " + obscurePassword(key, s));
 		return s;
+	}
+	
+	private String obscurePassword(String key, String value){
+		if (key.endsWith(".password")){
+			return "********";
+		}
+		return value;
 	}
 
 	public Properties getProperties() {
@@ -96,8 +103,8 @@ public class ConfigurationProperties {
 		final Iterator<String> iter = config.getKeys();
 		while (iter.hasNext()) {
 			final String key = iter.next();
-			final String unEscapedValue = unescape(config.getString(key));
-			logger.debug("getProperties(): including: " + key + "=" + config.getString(key) + " --> " + unEscapedValue);
+			final String unEscapedValue = unescape(key, config.getString(key));
+			logger.debug("getProperties(): including: " + key + "=" + obscurePassword(key, config.getString(key) + " --> " + unEscapedValue));
 			propertiesObject.put(key, unEscapedValue);
 		}
 		return propertiesObject;
@@ -142,7 +149,7 @@ public class ConfigurationProperties {
 
 		for (final Object keyObj : sourceProps.keySet()) {
 			final String key = (String) keyObj;
-			logger.debug("addAll(): adding: " + key + "=" + sourceProps.getProperty(key));
+			logger.debug("addAll(): adding: " + key + "=" + obscurePassword(key, sourceProps.getProperty(key)));
 			config.addProperty(key, sourceProps.getProperty(key));
 		}
 		getProperties();
