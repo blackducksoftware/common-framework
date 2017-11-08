@@ -40,10 +40,6 @@
 
   <repositories>
     <repository>
-      <id>ha-bds-artifactory</id>
-      <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-release/</url>
-    </repository>
-    <repository>
       <id>sonatype-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots/com/blackducksoftware/integration/</url>
     </repository>
