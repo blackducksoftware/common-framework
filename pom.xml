@@ -40,6 +40,14 @@
 
   <repositories>
     <repository>
+      <id>ha-bds-artifactory</id>
+      <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-release/</url>
+    </repository>
+    <repository>
+      <id>bds-artifactory</id>
+      <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-snapshot/</url>
+    </repository>
+    <repository>
       <id>maven-us.nuxeo</id>
       <name>Maven US Nexeo</name>
       <url>https://maven-us.nuxeo.org/nexus/content/repositories/thirdparty-releases</url>
