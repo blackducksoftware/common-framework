@@ -44,8 +44,8 @@
       <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-release/</url>
     </repository>
     <repository>
-      <id>bds-artifactory</id>
-      <url>https://prd-eng-repo02.dc2.lan/artifactory/bds-integrations-snapshot/</url>
+      <id>sonatype-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/com/blackducksoftware/integration/</url>
     </repository>
     <repository>
       <id>maven-us.nuxeo</id>
