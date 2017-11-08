@@ -41,7 +41,7 @@
   <repositories>
     <repository>
       <id>sonatype-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/com/blackducksoftware/integration/</url>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
     </repository>
     <repository>
       <id>maven-us.nuxeo</id>
