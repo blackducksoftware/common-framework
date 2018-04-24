@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.5</version>
+      <version>1.7.7</version>
     </dependency>
     <!-- Config Parsing -->
     <dependency>
@@ -99,12 +99,12 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>3.11-beta3</version>
+      <version>3.17</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>3.11-beta3</version>
+      <version>3.17</version>
     </dependency>
     <!-- Apache Utils -->
     <dependency>
