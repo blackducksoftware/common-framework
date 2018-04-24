@@ -1,7 +1,7 @@
 /**
  * CommonFramework
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -151,7 +152,7 @@ public class DataSetWriterExcel implements DataSetWriter {
 
 	// Make it a hyperlink
 	CreationHelper createHelper = workbook.getCreationHelper();
-	Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_URL);
+	Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
 	link.setAddress(record.getHyperlinkFieldValue(fieldDef.getName())
 		.getHyperlinkText());
 	cell.setHyperlink(link);
